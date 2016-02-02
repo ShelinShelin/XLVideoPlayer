@@ -26,13 +26,15 @@
         self.slider.value = 0.0;
         self.slider.middleValue = 0.0;
         //设置滑块颜色
-        self.slider.thumbTintColor = [UIColor whiteColor];
+//        self.slider.thumbTintColor = [UIColor whiteColor];
         //设置slider最左边一段的颜色
         self.slider.minimumTrackTintColor = [UIColor greenColor];
         //设置slider中间一段的颜色
         self.slider.middleTrackTintColor = [UIColor lightGrayColor];
         //设置slider最右边一段的颜色
         self.slider.maximumTrackTintColor = [UIColor blackColor];
+        [self.slider setThumbImage:[UIImage imageNamed:@"whitepoint"] forState:UIControlStateNormal];
+        [self.slider setThumbImage:[UIImage imageNamed:@"whitepoint"] forState:UIControlStateSelected];
     }
     return self;
 }

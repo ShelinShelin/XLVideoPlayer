@@ -16,7 +16,6 @@
 #define kMenuAnimateSpeed 0.8f
 #define kScreenAspectRatio kScreenWidth / kScreenHeight
 
-
 static BOOL isMenuBarHiden;
 //static BOOL isInOperation;
 
@@ -108,7 +107,7 @@ static BOOL isMenuBarHiden;
         [backBtn addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
         [backBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         backBtn.frame = CGRectMake(10, 22, 40, 40);
-        _topBar.backgroundColor = [UIColor whiteColor];
+        _topBar.backgroundColor = [UIColor blackColor];
         _topBar.layer.opacity = 0.0f;
     
     }
@@ -144,9 +143,9 @@ static BOOL isMenuBarHiden;
 
 - (void)show {
     [UIView animateWithDuration:kMenuAnimateSpeed animations:^{
-        self.menuBar.alpha = 0.7f;
-        self.topBar.alpha = 0.7f;
-        self.playOrPause.alpha = 0.7f;
+        self.menuBar.layer.opacity = 0.7f;
+        self.topBar.layer.opacity = 0.7f;
+        self.playOrPause.layer.opacity = 0.7f;
     } completion:^(BOOL finished) {
         isMenuBarHiden = !isMenuBarHiden;
         [self performBlock:^{
@@ -160,9 +159,9 @@ static BOOL isMenuBarHiden;
 
 - (void)hiden {
     [UIView animateWithDuration:kMenuAnimateSpeed animations:^{
-        self.menuBar.alpha = 0.0f;
-        self.topBar.alpha = 0.0f;
-        self.playOrPause.alpha = 0.0f;
+        self.menuBar.layer.opacity = 0.0f;
+        self.topBar.layer.opacity = 0.0f;
+        self.playOrPause.layer.opacity = 0.0f;
     } completion:^(BOOL finished){
         isMenuBarHiden = !isMenuBarHiden;
         [self.topBar removeFromSuperview];
@@ -177,10 +176,10 @@ static BOOL isMenuBarHiden;
 }
 
 - (void)playOrPause:(UIButton *)btn {
-    if(self.player.rate==0){ //暂停
+    if(self.player.rate == 0){ //暂停
         btn.selected = YES;
         [self.player play];
-    }else if(self.player.rate==1){//正在播放
+    }else if(self.player.rate == 1){//正在播放
         [self.player pause];
         btn.selected = NO;
     }
@@ -193,7 +192,6 @@ static BOOL isMenuBarHiden;
 
 - (void)sliderValueChange:(XLSlider *)slider {
     CMTime currentCMTime = CMTimeMake(slider.value * self.totalTime, 1);
-    
 //    NSLog(@"------%f",slider.value * self.totalTime);
     [self.player pause];
     [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
@@ -273,6 +271,14 @@ static BOOL isMenuBarHiden;
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
             weakSelf.slider.value = current / total;
+            //播放完毕，重头循环播放
+            if (weakSelf.slider.value == 1) {
+                weakSelf.playOrPause.selected = NO;
+                CMTime currentCMTime = CMTimeMake(0, 1);
+                [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
+                    weakSelf.slider.value = 0.0f;
+                }];
+            }
         }
     }];
 }
@@ -321,7 +327,7 @@ static BOOL isMenuBarHiden;
     int seconds = totalSeconds % 60;
     int minutes = (totalSeconds / 60) % 60;
     int hours = totalSeconds / 3600;
-    return [NSString stringWithFormat:@"%02d:%02d:%02d",hours, minutes, seconds];
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
 }
 
 @end
