@@ -26,7 +26,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    
     XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:VIDEO_URL];
     player.frame  = CGRectMake(0, 0, kScreenWidth, kScreenWidth * kScreenAspectRatio);
     [self.view addSubview:player];

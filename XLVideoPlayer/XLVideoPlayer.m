@@ -13,22 +13,37 @@
 
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
-#define kMenuAnimateSpeed 0.8f
 #define kScreenAspectRatio kScreenWidth / kScreenHeight
 
+#define kMenuAnimateSpeed 0.8f
+#define kMenuShowDuration 5.0f
+#define kTopBarHeight 44.0f
+#define kMenuBaHeight 30.0f
+#define kOpacity 0.7f;
+
 static BOOL isMenuBarHiden;
-//static BOOL isInOperation;
+static BOOL isInOperation;
 
 @interface XLVideoPlayer ()
-
+/**
+ *  progress slider
+ */
 @property (weak, nonatomic) XLSlider *slider;
-
+/**
+ *  full screen button
+ */
 @property (weak, nonatomic) UIButton *zoomButton;
-
-@property (nonatomic,strong) AVPlayer *player;//播放器对象
-
+/**
+ *  video player
+ */
+@property (nonatomic,strong) AVPlayer *player;
+/**
+ *  video total duration
+ */
 @property (nonatomic, assign) CGFloat totalTime;
-
+/**
+ *  video url
+ */
 @property (nonatomic, strong) NSURL *videoUrl;
 
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
@@ -61,10 +76,10 @@ static BOOL isMenuBarHiden;
         [self.layer addSublayer:playerLayer];
         self.playerLayer = playerLayer;
         
-        //屏幕旋转通知
+        //screen orientation change
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
         
-        //显示进度栏手势
+        //show or hiden gestureRecognizer
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenMenuBar)];
         [self addGestureRecognizer:tap];
         
@@ -72,7 +87,7 @@ static BOOL isMenuBarHiden;
         self.totalTimeLabel = self.menuBar.totalTimeLabel;
         self.progressLabel = self.menuBar.progressLabel;
     
-        self.menuBar.frame = CGRectMake(0, kScreenWidth * kScreenAspectRatio - 30, kScreenWidth, 30);
+        self.menuBar.frame = CGRectMake(0, kScreenWidth * kScreenAspectRatio - kMenuBaHeight, kScreenWidth, kMenuBaHeight);
         [self.menuBar menuBarWithZoomBlock:^(UIButton *btn) {
             [self zoomVideoPlayer:btn];
 
@@ -80,16 +95,17 @@ static BOOL isMenuBarHiden;
             [self sliderValueChange:slider];
         }];
         
-        self.topBar.frame = CGRectMake(0, 0, kScreenWidth, 44);
+        self.topBar.frame = CGRectMake(0, 0, kScreenWidth, kTopBarHeight);
     
         self.playOrPause.frame = CGRectMake((kScreenWidth - 60) / 2, (kScreenWidth * kScreenAspectRatio - 60) / 2, 60, 60);
         
         isMenuBarHiden = YES;
+        isInOperation = NO;
     }
     return self;
 }
 
-#pragma mark lazy loading
+#pragma mark - lazy loading
 
 - (XLMenuBar *)menuBar {
     if (!_menuBar) {
@@ -103,13 +119,12 @@ static BOOL isMenuBarHiden;
     if (!_topBar) {
         _topBar = [[UIView alloc] init];
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [backBtn setTitle:@"返回" forState:UIControlStateNormal];
+        [backBtn setImage:[UIImage imageNamed:@"btn_competition_day_left_arrow"] forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
-        [backBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        backBtn.frame = CGRectMake(10, 22, 40, 40);
+        backBtn.frame = CGRectMake(0, 0, kTopBarHeight, kTopBarHeight);
+        [_topBar addSubview:backBtn];
         _topBar.backgroundColor = [UIColor blackColor];
         _topBar.layer.opacity = 0.0f;
-    
     }
     return _topBar;
 }
@@ -125,11 +140,31 @@ static BOOL isMenuBarHiden;
     return _playOrPause;
 }
 
-#pragma mark call back
+- (AVPlayer *)player{
+    if (!_player) {
+        AVPlayerItem *playerItem = [self getAVPlayItem];
+        _player = [AVPlayer playerWithPlayerItem:playerItem];
+        
+        [self addProgressObserver];
+        
+        [self addObserverToPlayerItem:playerItem];
+    }
+    return _player;
+}
+
+//initialize AVPlayerItem
+
+- (AVPlayerItem *)getAVPlayItem{
+    
+    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoUrl];
+    return playerItem;
+}
+
+
+#pragma mark - call back
 
 - (void)showOrHidenMenuBar {
     NSLog(@"showOrHidenMenuBar");
-    
     [self addSubview:self.menuBar];
     [self addSubview:self.topBar];
     [self addSubview:self.playOrPause];
@@ -143,21 +178,22 @@ static BOOL isMenuBarHiden;
 
 - (void)show {
     [UIView animateWithDuration:kMenuAnimateSpeed animations:^{
-        self.menuBar.layer.opacity = 0.7f;
-        self.topBar.layer.opacity = 0.7f;
-        self.playOrPause.layer.opacity = 0.7f;
+        self.menuBar.layer.opacity = kOpacity;
+        self.topBar.layer.opacity = kOpacity;
+        self.playOrPause.layer.opacity = kOpacity;
     } completion:^(BOOL finished) {
         isMenuBarHiden = !isMenuBarHiden;
         [self performBlock:^{
-            if (!isMenuBarHiden) {
+            if (!isMenuBarHiden && !isInOperation) {
                 [self hiden];
             }
-        } afterDelay:5.0f];
+        } afterDelay:kMenuShowDuration];
         
     }];
 }
 
 - (void)hiden {
+    isInOperation = NO;
     [UIView animateWithDuration:kMenuAnimateSpeed animations:^{
         self.menuBar.layer.opacity = 0.0f;
         self.topBar.layer.opacity = 0.0f;
@@ -176,10 +212,10 @@ static BOOL isMenuBarHiden;
 }
 
 - (void)playOrPause:(UIButton *)btn {
-    if(self.player.rate == 0){ //暂停
+    if(self.player.rate == 0){      //pause
         btn.selected = YES;
         [self.player play];
-    }else if(self.player.rate == 1){//正在播放
+    }else if(self.player.rate == 1){    //playing
         [self.player pause];
         btn.selected = NO;
     }
@@ -191,12 +227,13 @@ static BOOL isMenuBarHiden;
 }
 
 - (void)sliderValueChange:(XLSlider *)slider {
+    isInOperation = YES;
     CMTime currentCMTime = CMTimeMake(slider.value * self.totalTime, 1);
 //    NSLog(@"------%f",slider.value * self.totalTime);
     [self.player pause];
     [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
-        
         [self.player play];
+        self.playOrPause.selected = YES;
     }];
 }
 
@@ -214,11 +251,12 @@ static BOOL isMenuBarHiden;
     block();
 }
 
+
 - (void)statusBarOrientationChange:(NSNotification *)notification
 {
     self.playerLayer.frame = CGRectMake(0, 0, kScreenWidth, kScreenWidth * 9 / 16);
-    self.menuBar.frame = CGRectMake(0, kScreenWidth * 9 / 16 - 30, kScreenWidth, 30);
-    self.topBar.frame = CGRectMake(0, 0, kScreenWidth, 44);
+    self.menuBar.frame = CGRectMake(0, kScreenWidth * 9 / 16 - kMenuBaHeight, kScreenWidth, kMenuBaHeight);
+    self.topBar.frame = CGRectMake(0, 0, kScreenWidth, kTopBarHeight);
     self.playOrPause.frame = CGRectMake((kScreenWidth - 60) / 2, (kScreenWidth * 9 / 16 - 60) / 2, 60, 60);
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
     if (orientation == UIInterfaceOrientationLandscapeRight){ // home键靠右
@@ -236,42 +274,24 @@ static BOOL isMenuBarHiden;
     }
 }
 
-- (AVPlayer *)player{
-    if (!_player) {
-        AVPlayerItem *playerItem = [self getAVPlayItem];
-        _player = [AVPlayer playerWithPlayerItem:playerItem];
-        
-        [self addProgressObserver];
-        
-        [self addObserverToPlayerItem:playerItem];
-    }
-    return _player;
-}
-
-//创建AVPlayerItem对象
-
-- (AVPlayerItem *)getAVPlayItem{
-    
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoUrl];
-    return playerItem;
-}
-
-#pragma mark 监听播放进度
+#pragma mark - monitor video playing course
 
 -(void)addProgressObserver{
     
-    //获取播放当前的playerItem
+    //get current playerItem object
     AVPlayerItem *playerItem = self.player.currentItem;
     __weak typeof(self) weakSelf = self;
-    //这里设置每秒执行一次
+    
+    //Set once per second
     [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         float current = CMTimeGetSeconds(time);
         float total = CMTimeGetSeconds([playerItem duration]);
-//        NSLog(@"当前已经播放%.2fs.",current);
+//        NSLog(@"already play ---- %.2fs.",current);
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
             weakSelf.slider.value = current / total;
-            //播放完毕，重头循环播放
+            
+            //finish and loop playback
             if (weakSelf.slider.value == 1) {
                 weakSelf.playOrPause.selected = NO;
                 CMTime currentCMTime = CMTimeMake(0, 1);
@@ -283,11 +303,13 @@ static BOOL isMenuBarHiden;
     }];
 }
 
-#pragma mark 监听PlayerItem的属性（status，loadedTimeRanges）改变2
+#pragma mark - PlayerItem （status，loadedTimeRanges）
+
 -(void)addObserverToPlayerItem:(AVPlayerItem *)playerItem{
+    
     //监控状态属性，注意AVPlayer也有一个status属性，通过监控它的status也可以获得播放状态
     [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
-    //监控网络加载情况属性
+    //network loading progress
     [playerItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
 }
 
@@ -316,7 +338,7 @@ static BOOL isMenuBarHiden;
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-//        NSLog(@"共缓冲：%.2f",totalBuffer);
+//        NSLog(@"otalBuffer：%.2f",totalBuffer);
     }
 }
 
