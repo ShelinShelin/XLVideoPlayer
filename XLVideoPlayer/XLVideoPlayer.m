@@ -13,13 +13,12 @@
 
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
-#define kScreenAspectRatio kScreenWidth / kScreenHeight
-
 #define kMenuAnimateSpeed 0.8f
 #define kMenuShowDuration 5.0f
 #define kTopBarHeight 44.0f
 #define kMenuBaHeight 30.0f
 #define kOpacity 0.7f;
+#define kPlayerBackgroundColor [UIColor blackColor].CGColor
 
 static BOOL isMenuBarHiden;
 static BOOL isInOperation;
@@ -68,9 +67,7 @@ static BOOL isInOperation;
         self.videoUrl = videoUrl;
         
         AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-        playerLayer.backgroundColor = [UIColor blackColor].CGColor;
-        
-        playerLayer.frame = CGRectMake(0, 0, kScreenWidth, kScreenWidth * kScreenAspectRatio);
+        playerLayer.backgroundColor = kPlayerBackgroundColor;
         
         playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;//视频填充模式
         [self.layer addSublayer:playerLayer];
@@ -87,7 +84,6 @@ static BOOL isInOperation;
         self.totalTimeLabel = self.menuBar.totalTimeLabel;
         self.progressLabel = self.menuBar.progressLabel;
     
-        self.menuBar.frame = CGRectMake(0, kScreenWidth * kScreenAspectRatio - kMenuBaHeight, kScreenWidth, kMenuBaHeight);
         [self.menuBar menuBarWithZoomBlock:^(UIButton *btn) {
             [self zoomVideoPlayer:btn];
 
@@ -95,14 +91,22 @@ static BOOL isInOperation;
             [self sliderValueChange:slider];
         }];
         
-        self.topBar.frame = CGRectMake(0, 0, kScreenWidth, kTopBarHeight);
-    
-        self.playOrPause.frame = CGRectMake((kScreenWidth - 60) / 2, (kScreenWidth * kScreenAspectRatio - 60) / 2, 60, 60);
-        
         isMenuBarHiden = YES;
         isInOperation = NO;
     }
     return self;
+}
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if (kScreenWidth <= 414) {
+        self.playerLayer.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+        self.menuBar.frame = CGRectMake(0, self.frame.size.height - kMenuBaHeight, self.frame.size.width, kMenuBaHeight);
+        self.topBar.frame = CGRectMake(0, 0, self.frame.size.width, kTopBarHeight);
+        
+        self.playOrPause.frame = CGRectMake((self.frame.size.width - 60) / 2, (self.frame.size.height - 60) / 2, 60, 60);
+    }
 }
 
 #pragma mark - lazy loading
@@ -153,7 +157,6 @@ static BOOL isInOperation;
 }
 
 //initialize AVPlayerItem
-
 - (AVPlayerItem *)getAVPlayItem{
     
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoUrl];
@@ -164,7 +167,6 @@ static BOOL isInOperation;
 #pragma mark - call back
 
 - (void)showOrHidenMenuBar {
-    NSLog(@"showOrHidenMenuBar");
     [self addSubview:self.menuBar];
     [self addSubview:self.topBar];
     [self addSubview:self.playOrPause];
@@ -237,41 +239,37 @@ static BOOL isInOperation;
     }];
 }
 
-/**
- *  After delay
- */
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
     [self performSelector:@selector(callBlockAfterDelay:) withObject:block afterDelay:delay];
 }
 
-/**
- *  After a few seconds to perform
- */
 - (void)callBlockAfterDelay:(void (^)(void))block {
     block();
 }
 
-
 - (void)statusBarOrientationChange:(NSNotification *)notification
 {
-    self.playerLayer.frame = CGRectMake(0, 0, kScreenWidth, kScreenWidth * 9 / 16);
-    self.menuBar.frame = CGRectMake(0, kScreenWidth * 9 / 16 - kMenuBaHeight, kScreenWidth, kMenuBaHeight);
-    self.topBar.frame = CGRectMake(0, 0, kScreenWidth, kTopBarHeight);
-    self.playOrPause.frame = CGRectMake((kScreenWidth - 60) / 2, (kScreenWidth * 9 / 16 - 60) / 2, 60, 60);
     UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    if (orientation == UIInterfaceOrientationLandscapeRight){ // home键靠右
-        //
-    }
-    if (orientation ==UIInterfaceOrientationLandscapeLeft) {// home键靠左
-    //
+    CGSize screenSize;
+    if (orientation == UIInterfaceOrientationLandscapeRight
+        || orientation == UIInterfaceOrientationLandscapeLeft
+        || orientation == UIInterfaceOrientationPortraitUpsideDown) {
+        screenSize = CGSizeMake(kScreenWidth, kScreenHeight);
+        [self updateFrameWithPlayerSize:screenSize];
     }
     if (orientation == UIInterfaceOrientationPortrait) {
-    
-        //
+        screenSize = CGSizeMake(self.frame.size.width, self.frame.size.height);
+        [self updateFrameWithPlayerSize:screenSize];
     }
-    if (orientation == UIInterfaceOrientationPortraitUpsideDown) {
-        //
-    }
+}
+
+- (void)updateFrameWithPlayerSize:(CGSize)size {
+    CGFloat screenWidth = size.width;
+    CGFloat screenHeight = size.height;
+    self.playerLayer.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    self.menuBar.frame = CGRectMake(0, screenHeight - kMenuBaHeight, screenWidth, kMenuBaHeight);
+    self.topBar.frame = CGRectMake(0, 0, screenWidth, kTopBarHeight);
+    self.playOrPause.frame = CGRectMake((screenWidth - 60) / 2, (screenHeight - 60) / 2, 60, 60);
 }
 
 #pragma mark - monitor video playing course
@@ -338,14 +336,14 @@ static BOOL isInOperation;
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-//        NSLog(@"otalBuffer：%.2f",totalBuffer);
+        NSLog(@"totalBuffer：%.2f",totalBuffer);
+        //首次加载缓存后执行，可在此移除加载动画
     }
 }
 
 #pragma mark - timeFormat
 
 - (NSString *)timeFormatted:(int)totalSeconds {
-    
     int seconds = totalSeconds % 60;
     int minutes = (totalSeconds / 60) % 60;
     int hours = totalSeconds / 3600;
