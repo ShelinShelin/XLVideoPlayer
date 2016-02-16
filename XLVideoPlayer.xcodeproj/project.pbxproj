@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FD99D86A1C72CCC900EB70EE /* XLSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FD99D8691C72CCC900EB70EE /* XLSlider.m */; };
 		FD9C15151C6056BE00110546 /* thaiPhuketKaronBeach.MOV in Resources */ = {isa = PBXBuildFile; fileRef = FD9C15141C6056BE00110546 /* thaiPhuketKaronBeach.MOV */; };
 		FDCEFA841C5F4FBF0043329E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFA831C5F4FBF0043329E /* main.m */; };
 		FDCEFA871C5F4FBF0043329E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFA861C5F4FBF0043329E /* AppDelegate.m */; };
@@ -17,9 +18,6 @@
 		FDCEFA9D1C5F4FBF0043329E /* XLVideoPlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFA9C1C5F4FBF0043329E /* XLVideoPlayerTests.m */; };
 		FDCEFAA81C5F4FBF0043329E /* XLVideoPlayerUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFAA71C5F4FBF0043329E /* XLVideoPlayerUITests.m */; };
 		FDCEFAB71C5F4FDE0043329E /* XLVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFAB61C5F4FDE0043329E /* XLVideoPlayer.m */; };
-		FDCEFABA1C5F50690043329E /* XLSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFAB91C5F50690043329E /* XLSlider.m */; };
-		FDCEFABE1C5F64980043329E /* XLMenuBar.xib in Resources */ = {isa = PBXBuildFile; fileRef = FDCEFABD1C5F64980043329E /* XLMenuBar.xib */; };
-		FDCEFAC11C5F64AC0043329E /* XLMenuBar.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFAC01C5F64AC0043329E /* XLMenuBar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		FD99D8681C72CCC900EB70EE /* XLSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLSlider.h; sourceTree = "<group>"; };
+		FD99D8691C72CCC900EB70EE /* XLSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLSlider.m; sourceTree = "<group>"; };
 		FD9C15141C6056BE00110546 /* thaiPhuketKaronBeach.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = thaiPhuketKaronBeach.MOV; sourceTree = "<group>"; };
 		FDCEFA7F1C5F4FBF0043329E /* XLVideoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XLVideoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDCEFA831C5F4FBF0043329E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -59,11 +59,6 @@
 		FDCEFAA91C5F4FBF0043329E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FDCEFAB51C5F4FDE0043329E /* XLVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoPlayer.h; sourceTree = "<group>"; };
 		FDCEFAB61C5F4FDE0043329E /* XLVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLVideoPlayer.m; sourceTree = "<group>"; };
-		FDCEFAB81C5F50690043329E /* XLSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLSlider.h; sourceTree = "<group>"; };
-		FDCEFAB91C5F50690043329E /* XLSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLSlider.m; sourceTree = "<group>"; };
-		FDCEFABD1C5F64980043329E /* XLMenuBar.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XLMenuBar.xib; sourceTree = "<group>"; };
-		FDCEFABF1C5F64AC0043329E /* XLMenuBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLMenuBar.h; sourceTree = "<group>"; };
-		FDCEFAC01C5F64AC0043329E /* XLMenuBar.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLMenuBar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,11 +121,8 @@
 				FDCEFA821C5F4FBF0043329E /* Supporting Files */,
 				FDCEFAB51C5F4FDE0043329E /* XLVideoPlayer.h */,
 				FDCEFAB61C5F4FDE0043329E /* XLVideoPlayer.m */,
-				FDCEFABF1C5F64AC0043329E /* XLMenuBar.h */,
-				FDCEFAC01C5F64AC0043329E /* XLMenuBar.m */,
-				FDCEFABD1C5F64980043329E /* XLMenuBar.xib */,
-				FDCEFAB81C5F50690043329E /* XLSlider.h */,
-				FDCEFAB91C5F50690043329E /* XLSlider.m */,
+				FD99D8681C72CCC900EB70EE /* XLSlider.h */,
+				FD99D8691C72CCC900EB70EE /* XLSlider.m */,
 			);
 			path = XLVideoPlayer;
 			sourceTree = "<group>";
@@ -267,7 +259,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FDCEFABE1C5F64980043329E /* XLMenuBar.xib in Resources */,
 				FD9C15151C6056BE00110546 /* thaiPhuketKaronBeach.MOV in Resources */,
 				FDCEFA921C5F4FBF0043329E /* LaunchScreen.storyboard in Resources */,
 				FDCEFA8F1C5F4FBF0043329E /* Assets.xcassets in Resources */,
@@ -298,8 +289,7 @@
 			files = (
 				FDCEFA8A1C5F4FBF0043329E /* ViewController.m in Sources */,
 				FDCEFA871C5F4FBF0043329E /* AppDelegate.m in Sources */,
-				FDCEFAC11C5F64AC0043329E /* XLMenuBar.m in Sources */,
-				FDCEFABA1C5F50690043329E /* XLSlider.m in Sources */,
+				FD99D86A1C72CCC900EB70EE /* XLSlider.m in Sources */,
 				FDCEFAB71C5F4FDE0043329E /* XLVideoPlayer.m in Sources */,
 				FDCEFA841C5F4FBF0043329E /* main.m in Sources */,
 			);

@@ -9,19 +9,21 @@
 #import "XLVideoPlayer.h"
 #import <AVFoundation/AVFoundation.h>
 #import "XLSlider.h"
-#import "XLMenuBar.h"
+//#import "XLMenuBar.h"
 
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kMenuAnimateSpeed 0.8f
 #define kMenuShowDuration 5.0f
 #define kTopBarHeight 44.0f
-#define kMenuBaHeight 30.0f
+#define kMenuBaHeight 40.0f
+#define kMagin 5.0f
 #define kOpacity 0.7f;
 #define kPlayerBackgroundColor [UIColor blackColor].CGColor
 
 static BOOL isMenuBarHiden;
 static BOOL isInOperation;
+static CGRect tempFrame;
 
 @interface XLVideoPlayer ()
 /**
@@ -31,7 +33,7 @@ static BOOL isInOperation;
 /**
  *  full screen button
  */
-@property (weak, nonatomic) UIButton *zoomButton;
+@property (weak, nonatomic) UIButton *fullScreenBtn;
 /**
  *  video player
  */
@@ -47,7 +49,7 @@ static BOOL isInOperation;
 
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 
-@property (nonatomic, strong) XLMenuBar *menuBar;
+@property (nonatomic, strong) UIView *menuBar;
 
 @property (nonatomic, strong) UIView *topBar;
 
@@ -56,6 +58,8 @@ static BOOL isInOperation;
 @property (nonatomic, strong) UILabel *totalTimeLabel;
 
 @property (nonatomic, strong) UILabel *progressLabel;
+
+
 
 @end
 
@@ -80,17 +84,6 @@ static BOOL isInOperation;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenMenuBar)];
         [self addGestureRecognizer:tap];
         
-        self.slider = self.menuBar.slider;
-        self.totalTimeLabel = self.menuBar.totalTimeLabel;
-        self.progressLabel = self.menuBar.progressLabel;
-    
-        [self.menuBar menuBarWithZoomBlock:^(UIButton *btn) {
-            [self zoomVideoPlayer:btn];
-
-        } sliderValueChange:^(XLSlider *slider) {
-            [self sliderValueChange:slider];
-        }];
-        
         isMenuBarHiden = YES;
         isInOperation = NO;
     }
@@ -103,17 +96,59 @@ static BOOL isInOperation;
     if (kScreenWidth <= 414) {
         self.playerLayer.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
         self.menuBar.frame = CGRectMake(0, self.frame.size.height - kMenuBaHeight, self.frame.size.width, kMenuBaHeight);
+        self.progressLabel.frame = CGRectMake(10, 0, 62, kMenuBaHeight);
+        
+        self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
+        
+        self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - kMagin, kMenuBaHeight);
+        
+        self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
+        
         self.topBar.frame = CGRectMake(0, 0, self.frame.size.width, kTopBarHeight);
         
         self.playOrPause.frame = CGRectMake((self.frame.size.width - 60) / 2, (self.frame.size.height - 60) / 2, 60, 60);
+        tempFrame = self.frame;
     }
 }
 
 #pragma mark - lazy loading
 
-- (XLMenuBar *)menuBar {
+- (UIView *)menuBar {
     if (!_menuBar) {
-        _menuBar = [[XLMenuBar alloc] init];
+        _menuBar = [[UIView alloc] init];
+        _menuBar.backgroundColor = [UIColor blackColor];
+        
+        UILabel *label1 = [[UILabel alloc] init];
+        label1.textAlignment = NSTextAlignmentCenter;
+        label1.text = @"00:00:00";
+        label1.font = [UIFont systemFontOfSize:14.0f];
+        label1.textColor = [UIColor whiteColor];
+        [_menuBar addSubview:label1];
+        self.progressLabel = label1;
+        
+        UILabel *label2 = [[UILabel alloc] init];
+        label2.textAlignment = NSTextAlignmentCenter;
+        label2.font = [UIFont systemFontOfSize:14.0f];
+        label2.textColor = [UIColor whiteColor];
+        [_menuBar addSubview:label2];
+        self.totalTimeLabel = label2;
+        
+        XLSlider *slider = [[XLSlider alloc] init];
+        slider.valueChangeBlock = ^(XLSlider *slider){
+            [self sliderValueChange:slider];
+        };
+        slider.finishChangeBlock = ^{
+            [self finishChange];
+        };
+        [_menuBar addSubview:slider];
+        self.slider = slider;
+        
+        UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"big"] forState:UIControlStateNormal];
+        [fullScreenBtn addTarget:self action:@selector(fullScreen:) forControlEvents:UIControlEventTouchUpInside];
+        [_menuBar addSubview:fullScreenBtn];
+        self.fullScreenBtn = fullScreenBtn;
+        
         _menuBar.layer.opacity = 0.0f;
     }
     return _menuBar;
@@ -165,6 +200,10 @@ static BOOL isInOperation;
 
 
 #pragma mark - call back
+
+- (void)fullScreen:(UIButton *)btn {
+    
+}
 
 - (void)showOrHidenMenuBar {
     [self addSubview:self.menuBar];
@@ -229,14 +268,22 @@ static BOOL isInOperation;
 }
 
 - (void)sliderValueChange:(XLSlider *)slider {
+    
     isInOperation = YES;
-    CMTime currentCMTime = CMTimeMake(slider.value * self.totalTime, 1);
-//    NSLog(@"------%f",slider.value * self.totalTime);
     [self.player pause];
+    self.progressLabel.text = [self timeFormatted:slider.value * self.totalTime];
+}
+
+- (void)finishChange {
+//    NSLog(@"finishChange");
+    isInOperation = NO;
+    CMTime currentCMTime = CMTimeMake(self.slider.value * self.totalTime, 1);
+
     [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
         [self.player play];
         self.playOrPause.selected = YES;
     }];
+    [self showOrHidenMenuBar];
 }
 
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
@@ -256,10 +303,12 @@ static BOOL isInOperation;
         || orientation == UIInterfaceOrientationPortraitUpsideDown) {
         screenSize = CGSizeMake(kScreenWidth, kScreenHeight);
         [self updateFrameWithPlayerSize:screenSize];
+        
     }
     if (orientation == UIInterfaceOrientationPortrait) {
         screenSize = CGSizeMake(self.frame.size.width, self.frame.size.height);
         [self updateFrameWithPlayerSize:screenSize];
+        self.frame = tempFrame;
     }
 }
 
@@ -267,7 +316,13 @@ static BOOL isInOperation;
     CGFloat screenWidth = size.width;
     CGFloat screenHeight = size.height;
     self.playerLayer.frame = CGRectMake(0, 0, screenWidth, screenHeight);
+    self.frame = CGRectMake(0, 0, self.playerLayer.frame.size.width, self.playerLayer.frame.size.height);
     self.menuBar.frame = CGRectMake(0, screenHeight - kMenuBaHeight, screenWidth, kMenuBaHeight);
+    
+    self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
+    self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - kMagin, kMenuBaHeight);
+    self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
+    
     self.topBar.frame = CGRectMake(0, 0, screenWidth, kTopBarHeight);
     self.playOrPause.frame = CGRectMake((screenWidth - 60) / 2, (screenHeight - 60) / 2, 60, 60);
 }
@@ -292,6 +347,7 @@ static BOOL isInOperation;
             //finish and loop playback
             if (weakSelf.slider.value == 1) {
                 weakSelf.playOrPause.selected = NO;
+                [weakSelf showOrHidenMenuBar];
                 CMTime currentCMTime = CMTimeMake(0, 1);
                 [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
                     weakSelf.slider.value = 0.0f;
@@ -326,7 +382,6 @@ static BOOL isInOperation;
         if(status == AVPlayerStatusReadyToPlay){
 //            NSLog(@"正在播放...，视频总长度:%.2f",CMTimeGetSeconds(playerItem.duration));
             self.totalTime = CMTimeGetSeconds(playerItem.duration);
-            
             self.totalTimeLabel.text = [self timeFormatted:self.totalTime];
         }
     }else if([keyPath isEqualToString:@"loadedTimeRanges"]){
@@ -336,7 +391,10 @@ static BOOL isInOperation;
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-        NSLog(@"totalBuffer：%.2f",totalBuffer);
+//        NSLog(@"%f",self.slider.middleValue);
+//        NSLog(@"totalBuffer：%.2f",totalBuffer);
+//        NSLog(@"--%f----",self.slider.middleValue);
+
         //首次加载缓存后执行，可在此移除加载动画
     }
 }

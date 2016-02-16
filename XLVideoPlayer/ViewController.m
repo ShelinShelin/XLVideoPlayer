@@ -14,8 +14,6 @@
 
 #define VIDEO_URL [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"thaiPhuketKaronBeach" ofType:@"MOV"]]
 
-#import "XLMenuBar.h"
-
 @interface ViewController ()
 
 @end
