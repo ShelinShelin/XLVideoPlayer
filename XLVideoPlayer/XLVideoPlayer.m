@@ -105,7 +105,7 @@ static CGRect tempFrame;
         
         self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
         
-        self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - kMagin, kMenuBaHeight);
+        self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - 2 * kMagin, kMenuBaHeight);
         
         self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
         
@@ -134,6 +134,7 @@ static CGRect tempFrame;
         
         UILabel *label2 = [[UILabel alloc] init];
         label2.textAlignment = NSTextAlignmentCenter;
+        label2.text = @"00:00:00";
         label2.font = [UIFont systemFontOfSize:14.0f];
         label2.textColor = [UIColor whiteColor];
         [_menuBar addSubview:label2];
@@ -296,7 +297,7 @@ static CGRect tempFrame;
         [self.player play];
         self.playOrPause.selected = YES;
     }];
-    [self showOrHidenMenuBar];
+//    [self showOrHidenMenuBar];
 }
 
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
@@ -333,7 +334,7 @@ static CGRect tempFrame;
     self.menuBar.frame = CGRectMake(0, screenHeight - kMenuBaHeight, screenWidth, kMenuBaHeight);
     
     self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
-    self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - kMagin, kMenuBaHeight);
+    self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - 2 * kMagin, kMenuBaHeight);
     self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
     
     self.topBar.frame = CGRectMake(0, 0, screenWidth, kTopBarHeight);
@@ -356,7 +357,6 @@ static CGRect tempFrame;
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
             weakSelf.slider.value = current / total;
-            
             //finish and loop playback
             if (weakSelf.slider.value == 1) {
                 weakSelf.playOrPause.selected = NO;
@@ -406,8 +406,14 @@ static CGRect tempFrame;
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
 //        NSLog(@"%f",self.slider.middleValue);
 //        NSLog(@"totalBuffer：%.2f",totalBuffer);
-        [self.activityIndicatorView removeFromSuperview];
-        //首次加载缓存后执行，可在此移除加载动画
+        //remove loading
+        if (self.slider.middleValue < self.slider.value) {
+            [self addSubview:self.activityIndicatorView];
+            [self.activityIndicatorView startAnimating];
+            
+        }else if(self.slider.middleValue >= self.slider.value) {
+            [self.activityIndicatorView removeFromSuperview];
+        }
     }
 }
 
