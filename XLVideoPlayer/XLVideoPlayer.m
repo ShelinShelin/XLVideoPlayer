@@ -59,7 +59,7 @@ static CGRect tempFrame;
 
 @property (nonatomic, strong) UILabel *progressLabel;
 
-
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
 @end
 
@@ -76,6 +76,11 @@ static CGRect tempFrame;
         playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;//视频填充模式
         [self.layer addSublayer:playerLayer];
         self.playerLayer = playerLayer;
+        
+        
+        [self addSubview:self.activityIndicatorView];
+        
+        [self.activityIndicatorView startAnimating];
         
         //screen orientation change
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
@@ -109,6 +114,7 @@ static CGRect tempFrame;
         self.playOrPause.frame = CGRectMake((self.frame.size.width - 60) / 2, (self.frame.size.height - 60) / 2, 60, 60);
         tempFrame = self.frame;
     }
+    self.activityIndicatorView.center = self.center;
 }
 
 #pragma mark - lazy loading
@@ -196,6 +202,13 @@ static CGRect tempFrame;
     
     AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoUrl];
     return playerItem;
+}
+
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (!_activityIndicatorView) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] init];
+    }
+    return _activityIndicatorView;
 }
 
 
@@ -393,8 +406,7 @@ static CGRect tempFrame;
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
 //        NSLog(@"%f",self.slider.middleValue);
 //        NSLog(@"totalBuffer：%.2f",totalBuffer);
-//        NSLog(@"--%f----",self.slider.middleValue);
-
+        [self.activityIndicatorView removeFromSuperview];
         //首次加载缓存后执行，可在此移除加载动画
     }
 }
