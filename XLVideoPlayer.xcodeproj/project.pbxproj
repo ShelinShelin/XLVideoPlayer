@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FD99D86A1C72CCC900EB70EE /* XLSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FD99D8691C72CCC900EB70EE /* XLSlider.m */; };
+		FD3F25DF1CA11B8900700826 /* XLSlider.m in Sources */ = {isa = PBXBuildFile; fileRef = FD3F25DE1CA11B8900700826 /* XLSlider.m */; };
+		FD3F25E31CA11CBC00700826 /* XLVideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FD3F25E11CA11CBC00700826 /* XLVideoCell.m */; };
+		FD3F25E41CA11CBC00700826 /* XLVideoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FD3F25E21CA11CBC00700826 /* XLVideoCell.xib */; };
 		FD9C15151C6056BE00110546 /* thaiPhuketKaronBeach.MOV in Resources */ = {isa = PBXBuildFile; fileRef = FD9C15141C6056BE00110546 /* thaiPhuketKaronBeach.MOV */; };
 		FDCEFA841C5F4FBF0043329E /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFA831C5F4FBF0043329E /* main.m */; };
 		FDCEFA871C5F4FBF0043329E /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FDCEFA861C5F4FBF0043329E /* AppDelegate.m */; };
@@ -38,8 +40,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FD99D8681C72CCC900EB70EE /* XLSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLSlider.h; sourceTree = "<group>"; };
-		FD99D8691C72CCC900EB70EE /* XLSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLSlider.m; sourceTree = "<group>"; };
+		FD3F25DD1CA11B8900700826 /* XLSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLSlider.h; sourceTree = "<group>"; };
+		FD3F25DE1CA11B8900700826 /* XLSlider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLSlider.m; sourceTree = "<group>"; };
+		FD3F25E01CA11CBC00700826 /* XLVideoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoCell.h; sourceTree = "<group>"; };
+		FD3F25E11CA11CBC00700826 /* XLVideoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLVideoCell.m; sourceTree = "<group>"; };
+		FD3F25E21CA11CBC00700826 /* XLVideoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XLVideoCell.xib; sourceTree = "<group>"; };
 		FD9C15141C6056BE00110546 /* thaiPhuketKaronBeach.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = thaiPhuketKaronBeach.MOV; sourceTree = "<group>"; };
 		FDCEFA7F1C5F4FBF0043329E /* XLVideoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XLVideoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FDCEFA831C5F4FBF0043329E /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -114,6 +119,9 @@
 				FDCEFA861C5F4FBF0043329E /* AppDelegate.m */,
 				FDCEFA881C5F4FBF0043329E /* ViewController.h */,
 				FDCEFA891C5F4FBF0043329E /* ViewController.m */,
+				FD3F25E01CA11CBC00700826 /* XLVideoCell.h */,
+				FD3F25E11CA11CBC00700826 /* XLVideoCell.m */,
+				FD3F25E21CA11CBC00700826 /* XLVideoCell.xib */,
 				FDCEFA8B1C5F4FBF0043329E /* Main.storyboard */,
 				FDCEFA8E1C5F4FBF0043329E /* Assets.xcassets */,
 				FDCEFA901C5F4FBF0043329E /* LaunchScreen.storyboard */,
@@ -121,8 +129,8 @@
 				FDCEFA821C5F4FBF0043329E /* Supporting Files */,
 				FDCEFAB51C5F4FDE0043329E /* XLVideoPlayer.h */,
 				FDCEFAB61C5F4FDE0043329E /* XLVideoPlayer.m */,
-				FD99D8681C72CCC900EB70EE /* XLSlider.h */,
-				FD99D8691C72CCC900EB70EE /* XLSlider.m */,
+				FD3F25DD1CA11B8900700826 /* XLSlider.h */,
+				FD3F25DE1CA11B8900700826 /* XLSlider.m */,
 			);
 			path = XLVideoPlayer;
 			sourceTree = "<group>";
@@ -263,6 +271,7 @@
 				FDCEFA921C5F4FBF0043329E /* LaunchScreen.storyboard in Resources */,
 				FDCEFA8F1C5F4FBF0043329E /* Assets.xcassets in Resources */,
 				FDCEFA8D1C5F4FBF0043329E /* Main.storyboard in Resources */,
+				FD3F25E41CA11CBC00700826 /* XLVideoCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,7 +298,8 @@
 			files = (
 				FDCEFA8A1C5F4FBF0043329E /* ViewController.m in Sources */,
 				FDCEFA871C5F4FBF0043329E /* AppDelegate.m in Sources */,
-				FD99D86A1C72CCC900EB70EE /* XLSlider.m in Sources */,
+				FD3F25DF1CA11B8900700826 /* XLSlider.m in Sources */,
+				FD3F25E31CA11CBC00700826 /* XLVideoCell.m in Sources */,
 				FDCEFAB71C5F4FDE0043329E /* XLVideoPlayer.m in Sources */,
 				FDCEFA841C5F4FBF0043329E /* main.m in Sources */,
 			);

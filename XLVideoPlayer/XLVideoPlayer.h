@@ -10,6 +10,10 @@
 
 @interface XLVideoPlayer : UIView
 
-- (instancetype)initWithVideoUrl:(NSURL *)videoUrl;
+- (instancetype)initWithVideoUrl:(NSString *)videoUrl;
+
+- (void)play;
+
+- (void)pause;
 
 @end

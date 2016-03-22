@@ -9,12 +9,11 @@
 #import "XLVideoPlayer.h"
 #import <AVFoundation/AVFoundation.h>
 #import "XLSlider.h"
-//#import "XLMenuBar.h"
 
-#define kScreenHeight [UIScreen mainScreen].bounds.size.height
-#define kScreenWidth [UIScreen mainScreen].bounds.size.width
-#define kMenuAnimateSpeed 0.8f
-#define kMenuShowDuration 5.0f
+//#define kScreenHeight [UIScreen mainScreen].bounds.size.height
+//#define kScreenWidth [UIScreen mainScreen].bounds.size.width
+#define kMenuAnimateSpeed 0.5f
+#define kMenuShowDuration 3.0f
 #define kTopBarHeight 44.0f
 #define kMenuBaHeight 40.0f
 #define kMagin 5.0f
@@ -23,9 +22,15 @@
 
 static BOOL isMenuBarHiden;
 static BOOL isInOperation;
-static CGRect tempFrame;
+static BOOL isDefalutFrame;
 
 @interface XLVideoPlayer ()
+
+@property (nonatomic, assign) CGRect playerDefalutFrame;
+/**
+ *  videoPlayer superView
+ */
+@property (nonatomic, strong) UIView *playSuprView;
 /**
  *  progress slider
  */
@@ -45,30 +50,27 @@ static CGRect tempFrame;
 /**
  *  video url
  */
-@property (nonatomic, strong) NSURL *videoUrl;
-
+@property (nonatomic, strong) NSString *videoUrl;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
-
 @property (nonatomic, strong) UIView *menuBar;
-
 @property (nonatomic, strong) UIView *topBar;
-
 @property (nonatomic, strong) UIButton *playOrPause;
-
 @property (nonatomic, strong) UILabel *totalTimeLabel;
-
 @property (nonatomic, strong) UILabel *progressLabel;
-
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
+@property (nonatomic, strong) UIWindow *keyWindow;
 
 @end
 
 @implementation XLVideoPlayer
 
-- (instancetype)initWithVideoUrl:(NSURL *)videoUrl {
+#pragma mark - public method
+
+- (instancetype)initWithVideoUrl:(NSString *)videoUrl {
     if ([super init]) {
         
         self.videoUrl = videoUrl;
+        self.keyWindow = [UIApplication sharedApplication].keyWindow;
         
         AVPlayerLayer *playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
         playerLayer.backgroundColor = kPlayerBackgroundColor;
@@ -79,11 +81,17 @@ static CGRect tempFrame;
         
         
         [self addSubview:self.activityIndicatorView];
-        
         [self.activityIndicatorView startAnimating];
         
+        //menuBar
+        [self addSubview:self.menuBar];
+        
+        //topBar
+        [self addSubview:self.topBar];
+        
         //screen orientation change
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
         
         //show or hiden gestureRecognizer
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenMenuBar)];
@@ -95,26 +103,29 @@ static CGRect tempFrame;
     return self;
 }
 
+- (void)play {
+    [self.player play];
+}
+
+- (void)pause {
+    [self.player pause];
+}
+
 - (void)layoutSubviews {
     [super layoutSubviews];
+    self.playerLayer.frame = self.bounds;
     
-    if (kScreenWidth <= 414) {
-        self.playerLayer.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-        self.menuBar.frame = CGRectMake(0, self.frame.size.height - kMenuBaHeight, self.frame.size.width, kMenuBaHeight);
-        self.progressLabel.frame = CGRectMake(10, 0, 62, kMenuBaHeight);
+    UIInterfaceOrientation sataus=[UIApplication sharedApplication].statusBarOrientation;
+    if (sataus == UIInterfaceOrientationPortrait) {
+        NSLog(@"======UIDeviceOrientationPortrait");
         
-        self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
-        
-        self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - 2 * kMagin, kMenuBaHeight);
-        
-        self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
-        
-        self.topBar.frame = CGRectMake(0, 0, self.frame.size.width, kTopBarHeight);
-        
-        self.playOrPause.frame = CGRectMake((self.frame.size.width - 60) / 2, (self.frame.size.height - 60) / 2, 60, 60);
-        tempFrame = self.frame;
     }
-    self.activityIndicatorView.center = self.center;
+    if (!isDefalutFrame) {
+        self.playerDefalutFrame = self.frame;
+        self.playSuprView = self.superview;
+    }
+    isDefalutFrame = YES;
+    [self setMenuBaAndTopBarConstraints];
 }
 
 #pragma mark - lazy loading
@@ -123,8 +134,11 @@ static CGRect tempFrame;
     if (!_menuBar) {
         _menuBar = [[UIView alloc] init];
         _menuBar.backgroundColor = [UIColor blackColor];
+        _menuBar.translatesAutoresizingMaskIntoConstraints = NO;
         
+    
         UILabel *label1 = [[UILabel alloc] init];
+        label1.translatesAutoresizingMaskIntoConstraints = NO;
         label1.textAlignment = NSTextAlignmentCenter;
         label1.text = @"00:00:00";
         label1.font = [UIFont systemFontOfSize:14.0f];
@@ -132,7 +146,30 @@ static CGRect tempFrame;
         [_menuBar addSubview:label1];
         self.progressLabel = label1;
         
+        NSLayoutConstraint *label1Left = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Top = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Bottom = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Width = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:80];
+        [_menuBar addConstraints:@[label1Left, label1Top, label1Bottom, label1Width]];
+        
+        
+        
+        UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        fullScreenBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        [fullScreenBtn setImage:[UIImage imageNamed:@"big"] forState:UIControlStateNormal];
+        [fullScreenBtn addTarget:self action:@selector(fullScreen:) forControlEvents:UIControlEventTouchUpInside];
+        [_menuBar addSubview:fullScreenBtn];
+        self.fullScreenBtn = fullScreenBtn;
+        
+        NSLayoutConstraint *btnWidth = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:25];
+        NSLayoutConstraint *btnHeight = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:25];
+        NSLayoutConstraint *btnRight = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeRight multiplier:1.0f constant:-10];
+        NSLayoutConstraint *btnCenterY = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0];
+        [_menuBar addConstraints:@[btnWidth, btnHeight, btnRight, btnCenterY]];
+
+
         UILabel *label2 = [[UILabel alloc] init];
+        label2.translatesAutoresizingMaskIntoConstraints = NO;
         label2.textAlignment = NSTextAlignmentCenter;
         label2.text = @"00:00:00";
         label2.font = [UIFont systemFontOfSize:14.0f];
@@ -140,22 +177,40 @@ static CGRect tempFrame;
         [_menuBar addSubview:label2];
         self.totalTimeLabel = label2;
         
+        NSLayoutConstraint *label2Right = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:fullScreenBtn attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Top = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Bottom = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Width = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:80];
+        [_menuBar addConstraints:@[label2Right, label2Top, label2Bottom, label2Width]];
+        
+        
+
         XLSlider *slider = [[XLSlider alloc] init];
+        slider.translatesAutoresizingMaskIntoConstraints = NO;
         slider.valueChangeBlock = ^(XLSlider *slider){
             [self sliderValueChange:slider];
         };
-        slider.finishChangeBlock = ^{
+        slider.finishChangeBlock = ^(XLSlider *slider){
             [self finishChange];
+        };
+        slider.dragSliderBlock = ^(XLSlider *slider){
+            [self dragSlider];
         };
         [_menuBar addSubview:slider];
         self.slider = slider;
-        
-        UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        [fullScreenBtn setImage:[UIImage imageNamed:@"big"] forState:UIControlStateNormal];
-        [fullScreenBtn addTarget:self action:@selector(fullScreen:) forControlEvents:UIControlEventTouchUpInside];
-        [_menuBar addSubview:fullScreenBtn];
-        self.fullScreenBtn = fullScreenBtn;
-        
+        NSLayoutConstraint *sliderLeft = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:label1 attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderRight = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:label2 attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderTop = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderBottom = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_menuBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        [_menuBar addConstraints:@[sliderLeft, sliderRight, sliderTop, sliderBottom]];
+
+        [self addSubview:self.playOrPause];
+
+        NSLayoutConstraint *centerBtnCenterX = [NSLayoutConstraint constraintWithItem:_playOrPause attribute:NSLayoutAttributeCenterX relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterX multiplier:1.0f constant:0];
+        NSLayoutConstraint *centerBtnCenterY = [NSLayoutConstraint constraintWithItem:_playOrPause attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0];
+        NSLayoutConstraint *centerBtnWidth = [NSLayoutConstraint constraintWithItem:_playOrPause attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:60];
+        NSLayoutConstraint *centerBtnHeight = [NSLayoutConstraint constraintWithItem:_playOrPause attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:60];
+        [self addConstraints:@[centerBtnCenterX, centerBtnCenterY, centerBtnWidth, centerBtnHeight]];
         _menuBar.layer.opacity = 0.0f;
     }
     return _menuBar;
@@ -164,6 +219,7 @@ static CGRect tempFrame;
 - (UIView *)topBar {
     if (!_topBar) {
         _topBar = [[UIView alloc] init];
+        _topBar.translatesAutoresizingMaskIntoConstraints = NO;
         UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         [backBtn setImage:[UIImage imageNamed:@"btn_competition_day_left_arrow"] forState:UIControlStateNormal];
         [backBtn addTarget:self action:@selector(backBtnClick:) forControlEvents:UIControlEventTouchUpInside];
@@ -171,6 +227,7 @@ static CGRect tempFrame;
         [_topBar addSubview:backBtn];
         _topBar.backgroundColor = [UIColor blackColor];
         _topBar.layer.opacity = 0.0f;
+        
     }
     return _topBar;
 }
@@ -178,6 +235,7 @@ static CGRect tempFrame;
 - (UIButton *)playOrPause {
     if (!_playOrPause) {
         _playOrPause = [UIButton buttonWithType:UIButtonTypeCustom];
+        _playOrPause.translatesAutoresizingMaskIntoConstraints = NO;
         _playOrPause.layer.opacity = 0.0f;
         [_playOrPause setBackgroundImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
         [_playOrPause setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateSelected];
@@ -201,8 +259,14 @@ static CGRect tempFrame;
 //initialize AVPlayerItem
 - (AVPlayerItem *)getAVPlayItem{
     
-    AVPlayerItem *playerItem = [AVPlayerItem playerItemWithURL:self.videoUrl];
-    return playerItem;
+    if ([self.videoUrl rangeOfString:@"http"].location != NSNotFound) {
+        AVPlayerItem *playerItem=[AVPlayerItem playerItemWithURL:[NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+        return playerItem;
+    }else{
+        AVAsset *movieAsset  = [[AVURLAsset alloc]initWithURL:[NSURL fileURLWithPath:self.videoUrl] options:nil];
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:movieAsset];
+        return playerItem;
+    }
 }
 
 - (UIActivityIndicatorView *)activityIndicatorView {
@@ -212,7 +276,6 @@ static CGRect tempFrame;
     return _activityIndicatorView;
 }
 
-
 #pragma mark - call back
 
 - (void)fullScreen:(UIButton *)btn {
@@ -220,10 +283,6 @@ static CGRect tempFrame;
 }
 
 - (void)showOrHidenMenuBar {
-    [self addSubview:self.menuBar];
-    [self addSubview:self.topBar];
-    [self addSubview:self.playOrPause];
-
     if (isMenuBarHiden) {
         [self show];
     }else {
@@ -237,13 +296,14 @@ static CGRect tempFrame;
         self.topBar.layer.opacity = kOpacity;
         self.playOrPause.layer.opacity = kOpacity;
     } completion:^(BOOL finished) {
-        isMenuBarHiden = !isMenuBarHiden;
-        [self performBlock:^{
-            if (!isMenuBarHiden && !isInOperation) {
-                [self hiden];
-            }
-        } afterDelay:kMenuShowDuration];
-        
+        if (finished) {
+            isMenuBarHiden = !isMenuBarHiden;
+            [self performBlock:^{
+                if (!isMenuBarHiden && !isInOperation) {
+                    [self hiden];
+                }
+            } afterDelay:kMenuShowDuration];
+        }
     }];
 }
 
@@ -254,10 +314,9 @@ static CGRect tempFrame;
         self.topBar.layer.opacity = 0.0f;
         self.playOrPause.layer.opacity = 0.0f;
     } completion:^(BOOL finished){
-        isMenuBarHiden = !isMenuBarHiden;
-        [self.topBar removeFromSuperview];
-        [self.playOrPause removeFromSuperview];
-        [self.menuBar removeFromSuperview];
+        if (finished) {
+            isMenuBarHiden = !isMenuBarHiden;
+        }
     }];
 }
 
@@ -282,14 +341,11 @@ static CGRect tempFrame;
 }
 
 - (void)sliderValueChange:(XLSlider *)slider {
-    
-    isInOperation = YES;
-    [self.player pause];
+    NSLog(@"sliderValueChange");
     self.progressLabel.text = [self timeFormatted:slider.value * self.totalTime];
 }
 
 - (void)finishChange {
-//    NSLog(@"finishChange");
     isInOperation = NO;
     CMTime currentCMTime = CMTimeMake(self.slider.value * self.totalTime, 1);
 
@@ -297,7 +353,12 @@ static CGRect tempFrame;
         [self.player play];
         self.playOrPause.selected = YES;
     }];
-//    [self showOrHidenMenuBar];
+}
+
+- (void)dragSlider {
+    NSLog(@"dragSlider");
+    isInOperation = YES;
+    [self.player pause];
 }
 
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
@@ -308,37 +369,23 @@ static CGRect tempFrame;
     block();
 }
 
-- (void)statusBarOrientationChange:(NSNotification *)notification
-{
-    UIInterfaceOrientation orientation = [[UIApplication sharedApplication] statusBarOrientation];
-    CGSize screenSize;
-    if (orientation == UIInterfaceOrientationLandscapeRight
-        || orientation == UIInterfaceOrientationLandscapeLeft
-        || orientation == UIInterfaceOrientationPortraitUpsideDown) {
-        screenSize = CGSizeMake(kScreenWidth, kScreenHeight);
-        [self updateFrameWithPlayerSize:screenSize];
-        
-    }
-    if (orientation == UIInterfaceOrientationPortrait) {
-        screenSize = CGSizeMake(self.frame.size.width, self.frame.size.height);
-        [self updateFrameWithPlayerSize:screenSize];
-        self.frame = tempFrame;
-    }
-}
+- (void)statusBarOrientationChange:(NSNotification *)notification {
 
-- (void)updateFrameWithPlayerSize:(CGSize)size {
-    CGFloat screenWidth = size.width;
-    CGFloat screenHeight = size.height;
-    self.playerLayer.frame = CGRectMake(0, 0, screenWidth, screenHeight);
-    self.frame = CGRectMake(0, 0, self.playerLayer.frame.size.width, self.playerLayer.frame.size.height);
-    self.menuBar.frame = CGRectMake(0, screenHeight - kMenuBaHeight, screenWidth, kMenuBaHeight);
-    
-    self.totalTimeLabel.frame = CGRectMake(self.menuBar.frame.size.width - 72 - kMenuBaHeight, 0, 62, kMenuBaHeight);
-    self.slider.frame = CGRectMake(CGRectGetMaxX(self.progressLabel.frame) + kMagin, 0, CGRectGetMinX(self.totalTimeLabel.frame) - 72 - 2 * kMagin, kMenuBaHeight);
-    self.fullScreenBtn.frame = CGRectMake(CGRectGetMaxX(self.totalTimeLabel.frame), 0, kMenuBaHeight, kMenuBaHeight);
-    
-    self.topBar.frame = CGRectMake(0, 0, screenWidth, kTopBarHeight);
-    self.playOrPause.frame = CGRectMake((screenWidth - 60) / 2, (screenHeight - 60) / 2, 60, 60);
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    [self removeFromSuperview];
+    [self.keyWindow addSubview:self];
+    if (orientation == UIDeviceOrientationLandscapeLeft) {
+//        NSLog(@"UIDeviceOrientationLandscapeLeft");
+        self.frame = self.keyWindow.bounds;
+    }else if (orientation == UIDeviceOrientationLandscapeRight) {
+//        NSLog(@"UIDeviceOrientationLandscapeRight");
+        self.frame = self.keyWindow.bounds;
+    }else if (orientation == UIDeviceOrientationPortrait) {
+//        NSLog(@"UIDeviceOrientationPortrait");
+        self.frame = self.playerDefalutFrame;
+        [self removeFromSuperview];
+        [self.playSuprView addSubview:self];
+    }
 }
 
 #pragma mark - monitor video playing course
@@ -356,6 +403,7 @@ static CGRect tempFrame;
 //        NSLog(@"already play ---- %.2fs.",current);
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
+            NSLog(@"%f", current / total);
             weakSelf.slider.value = current / total;
             //finish and loop playback
             if (weakSelf.slider.value == 1) {
@@ -424,6 +472,28 @@ static CGRect tempFrame;
     int minutes = (totalSeconds / 60) % 60;
     int hours = totalSeconds / 3600;
     return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
+}
+
+#pragma mark - setMenuBaAndTopBarConstraints
+
+- (void)setMenuBaAndTopBarConstraints {
+    
+    NSLayoutConstraint *menuBarLeft = [NSLayoutConstraint constraintWithItem:self.menuBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *menuBarRight = [NSLayoutConstraint constraintWithItem:self.menuBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *menuBarBottom = [NSLayoutConstraint constraintWithItem:self.menuBar attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *menuBarHeight = [NSLayoutConstraint constraintWithItem:self.menuBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:kMenuBaHeight];
+    [self addConstraints:@[menuBarLeft, menuBarRight, menuBarBottom, menuBarHeight]];
+    
+    
+    NSLayoutConstraint *topBarLeft = [NSLayoutConstraint constraintWithItem:self.topBar attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *topBarRight = [NSLayoutConstraint constraintWithItem:self.topBar attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeRight multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *topBarTop = [NSLayoutConstraint constraintWithItem:self.topBar attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self attribute:NSLayoutAttributeTop multiplier:1.0f constant:0.0f];
+    NSLayoutConstraint *topBarHeight = [NSLayoutConstraint constraintWithItem:self.topBar attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:kTopBarHeight];
+    [self addConstraints:@[topBarLeft, topBarRight, topBarTop, topBarHeight]];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

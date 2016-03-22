@@ -8,32 +8,57 @@
 
 #import "ViewController.h"
 #import "XLVideoPlayer.h"
+#import "XLVideoCell.h"
+
 #define kScreenHeight [UIScreen mainScreen].bounds.size.height
 #define kScreenWidth [UIScreen mainScreen].bounds.size.width
 #define kScreenAspectRatio kScreenWidth / kScreenHeight
 
-#define VIDEO_URL [NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:@"thaiPhuketKaronBeach" ofType:@"MOV"]]
+#define VIDEO_URL [NSURL fileURLWithPath:]
 
-@interface ViewController ()
+@interface ViewController () <UITableViewDataSource, UITableViewDelegate>
+
+@property (nonatomic, strong) UITableView *tableView;
 
 @end
 
 @implementation ViewController
 
+- (UITableView *)tableView {
+    if (!_tableView) {
+        _tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
+        _tableView.estimatedRowHeight = 100;
+        _tableView.dataSource = self;
+        _tableView.delegate = self;
+    }
+    return _tableView;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
-    NSURL *url = [NSURL URLWithString:@"http://119.90.127.133/youku/656B810EC543818EC134A4EF2/030008010056A7138D7457003E880324242F42-0E8E-8742-2C0B-799D7B49E617.mp4"];
-    
-    XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:url];
-    player.frame  = CGRectMake(0, 0, kScreenWidth, 400);
-    [self.view addSubview:player];
+
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self.view addSubview:self.tableView];
+   
     
 }
 
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 1;
 }
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return [XLVideoCell videoCellWithTableView:tableView];
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+//    NSLog(@"didSelectRowAtIndexPath");
+    XLVideoCell *cell = (XLVideoCell *)[tableView cellForRowAtIndexPath:indexPath];
+    
+    XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:[[NSBundle mainBundle] pathForResource:@"thaiPhuketKaronBeach" ofType:@"MOV"]];
+    player.frame = cell.videoImageView.bounds;
+    
+    [cell insertSubview:player aboveSubview:cell.videoImageView];
+}
 @end

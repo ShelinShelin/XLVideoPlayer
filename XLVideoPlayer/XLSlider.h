@@ -2,25 +2,32 @@
 //  XLSlider.h
 //  XLSlider
 //
-//  Created by Shelin on 16/2/4.
-//  Copyright © 2016年 xiemingjiang. All rights reserved.
+//  Created by Shelin on 16/3/18.
+//  Copyright © 2016年 GreatGate. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 @class XLSlider;
 
 typedef void (^SliderValueChangeBlock) (XLSlider *slider);
-typedef void (^FinishChangeBlock) (void);
+typedef void (^SliderFinishChangeBlock) (XLSlider *slider);
+typedef void (^DragSliderBlock) (XLSlider *slider);
 
 @interface XLSlider : UIView
 
 @property (nonatomic, assign) CGFloat value;        /* From 0 to 1 */
 @property (nonatomic, assign) CGFloat middleValue;  /* From 0 to 1 */
+
+@property (nonatomic, assign) CGFloat lineWidth;
+@property (nonatomic, assign) CGFloat sliderDiameter;
+@property (nonatomic, strong) UIColor *sliderColor;
+@property (nonatomic, strong) UIColor *maxColor;
+@property (nonatomic, strong) UIColor *middleColor;
+@property (nonatomic, strong) UIColor *minColor;
+
 @property (nonatomic, copy) SliderValueChangeBlock valueChangeBlock;
-@property (nonatomic, copy) FinishChangeBlock finishChangeBlock;
-//@property (nonatomic, strong) UIColor* thumbTintColor;
-//@property (nonatomic, strong) UIColor* minimumTrackTintColor;
-//@property (nonatomic, strong) UIColor* middleTrackTintColor;
-//@property (nonatomic, strong) UIColor* maximumTrackTintColor;
+@property (nonatomic, copy) SliderFinishChangeBlock finishChangeBlock;
+@property (nonatomic, strong) DragSliderBlock dragSliderBlock;
+
 
 @end
