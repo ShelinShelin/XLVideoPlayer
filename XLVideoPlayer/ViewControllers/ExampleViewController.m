@@ -57,7 +57,6 @@ static BOOL isExist;
     if (!isExist) {
         XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:videoUrl];
         player.frame = cell.videoImageView.bounds;
-        
         [cell.contentView addSubview:player];
     }
     isExist = YES;

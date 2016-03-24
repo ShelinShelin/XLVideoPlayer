@@ -7,8 +7,13 @@
 //  https://github.com/ShelinShelin
 
 #import <UIKit/UIKit.h>
+@class XLVideoPlayer;
+
+typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 
 @interface XLVideoPlayer : UIView
+
+@property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
 
 - (instancetype)initWithVideoUrl:(NSString *)videoUrl;
 

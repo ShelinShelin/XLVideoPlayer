@@ -164,6 +164,9 @@ static CGFloat panDistance;
     CGPoint location = [tapGesture locationInView:self];
     panDistance = location.x;
     self.value =  panDistance / (self.frame.size.width - self.sliderDiameter);
+    if (self.finishChangeBlock) {
+        self.finishChangeBlock(self);
+    }
 }
 
 #pragma mark - setter getter
@@ -175,7 +178,7 @@ static CGFloat panDistance;
 
 - (UIColor *)sliderColor {
     if (!_sliderColor) {
-        return [UIColor colorWithRed:0.56f green:0.77f blue:0.31f alpha:1.00f];
+        return [UIColor colorWithRed:0.49f green:0.83f blue:0.13f alpha:1.00f];
     }
     return _sliderColor;
 }
@@ -248,6 +251,11 @@ static CGFloat panDistance;
 - (void)setValue:(CGFloat)value {
     _value = value;
     panDistance = value * (self.frame.size.width - self.sliderDiameter);
+}
+
+- (void)dealloc {
+    [self removeObserver:self forKeyPath:@"value"];
+    [self removeObserver:self forKeyPath:@"middleValue"];
 }
 
 @end

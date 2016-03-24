@@ -38,6 +38,7 @@
 @property (nonatomic, assign) CGRect playerOriginalFrame;
 @property (nonatomic, strong) UIButton *zoomScreenBtn;
 
+@property (nonatomic, strong) AVPlayerItem *playerItem;
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 /**video player*/
 @property (nonatomic,strong) AVPlayer *player;
@@ -65,13 +66,15 @@
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
         
         //show or hiden gestureRecognizer
-        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenMenuBar:)];
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenBar)];
         [self addGestureRecognizer:tap];
 
         [self.layer addSublayer:self.playerLayer];
         [self addSubview:self.topBar];
         [self addSubview:self.bottomBar];
         [self addSubview:self.playOrPauseBtn];
+        [self addSubview:self.activityIndicatorView];
+        [self.activityIndicatorView startAnimating];
         
         _barHiden = YES;
     }
@@ -99,6 +102,7 @@
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake(0, 0, kPlayBtnSideLength, kPlayBtnSideLength);
         self.playOrPauseBtn.center = self.center;
+        self.activityIndicatorView.center = self.center;
     }
     _isOriginalFrame = YES;
 }
@@ -117,6 +121,7 @@
 - (AVPlayer *)player{
     if (!_player) {
         AVPlayerItem *playerItem = [self getAVPlayItem];
+        self.playerItem = playerItem;
         _player = [AVPlayer playerWithPlayerItem:playerItem];
         
         [self addProgressObserver];
@@ -223,19 +228,19 @@
         NSLayoutConstraint *label2Width = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:70.0f];
         [_bottomBar addConstraints:@[label2Right, label2Top, label2Bottom, label2Width]];
         
-        
         XLSlider *slider = [[XLSlider alloc] init];
         slider.translatesAutoresizingMaskIntoConstraints = NO;
         [_bottomBar addSubview:slider];
         self.slider = slider;
+        __weak typeof(self) weakSelf = self;
         slider.valueChangeBlock = ^(XLSlider *slider){
-            [self sliderValueChange:slider];
+            [weakSelf sliderValueChange:slider];
         };
         slider.finishChangeBlock = ^(XLSlider *slider){
-            [self finishChange];
+            [weakSelf finishChange];
         };
         slider.dragSliderBlock = ^(XLSlider *slider){
-            [self dragSlider];
+            [weakSelf dragSlider];
         };
         
         NSLayoutConstraint *sliderLeft = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:label1 attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
@@ -245,7 +250,6 @@
         [_bottomBar addConstraints:@[sliderLeft, sliderRight, sliderTop, sliderBottom]];
         
         [self updateConstraintsIfNeeded];
-
     }
     return _bottomBar;
 }
@@ -307,6 +311,7 @@
         self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
     }];
     
     [self setStatusBarHidden:YES];
@@ -327,6 +332,7 @@
         self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
     }];
     [self setStatusBarHidden:YES];
 }
@@ -344,6 +350,7 @@
         self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
         [self updateConstraintsIfNeeded];
     }];
     [self setStatusBarHidden:NO];
@@ -365,7 +372,7 @@
     [self removeFromSuperview];
 }
 
-- (void)showOrHidenMenuBar:(UITapGestureRecognizer *)tapGesture {
+- (void)showOrHidenBar {
     if (_barHiden) {
         [self show];
     }else {
@@ -454,7 +461,7 @@
             //finish and loop playback
             if (weakSelf.slider.value == 1) {
                 weakSelf.playOrPauseBtn.selected = NO;
-//                [weakSelf showOrHidenMenuBar];
+                [weakSelf showOrHidenBar];
                 CMTime currentCMTime = CMTimeMake(0, 1);
                 [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
                     weakSelf.slider.value = 0.0f;
@@ -487,7 +494,6 @@
     if ([keyPath isEqualToString:@"status"]) {
         AVPlayerStatus status = [[change objectForKey:@"new"] intValue];
         if(status == AVPlayerStatusReadyToPlay){
-//            NSLog(@"正在播放...，视频总长度:%.2f",CMTimeGetSeconds(playerItem.duration));
             self.totalDuration = CMTimeGetSeconds(playerItem.duration);
             self.totalDurationLabel.text = [self timeFormatted:self.totalDuration];
         }
@@ -498,19 +504,16 @@
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-//        NSLog(@"%f",self.slider.middleValue);
 //        NSLog(@"totalBuffer：%.2f",totalBuffer);
         //remove loading animation
         if (self.slider.middleValue < self.slider.value) {
             [self addSubview:self.activityIndicatorView];
             [self.activityIndicatorView startAnimating];
-            
         }else if(self.slider.middleValue >= self.slider.value) {
             [self.activityIndicatorView removeFromSuperview];
         }
     }
 }
-
 
 #pragma mark - timeFormat
 
@@ -521,9 +524,12 @@
     return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
 }
 
+#pragma mark - dealloc
+
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    NSLog(@"dealloc");
+    [self.playerItem removeObserver:self forKeyPath:@"status"];
+    [self.playerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
 }
 
 @end
