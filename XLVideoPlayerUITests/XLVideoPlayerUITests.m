@@ -2,7 +2,7 @@
 //  XLVideoPlayerUITests.m
 //  XLVideoPlayerUITests
 //
-//  Created by Shelin on 16/2/1.
+//  Created by Shelin on 16/3/23.
 //  Copyright © 2016年 GreatGate. All rights reserved.
 //
 

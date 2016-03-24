@@ -1,5 +1,5 @@
 //
-//  AppDelegate.h
+//  ExampleViewController.h
 //  XLVideoPlayer
 //
 //  Created by Shelin on 16/3/23.
@@ -8,10 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
-
-@property (strong, nonatomic) UIWindow *window;
-
+@interface ExampleViewController : UIViewController
 
 @end
-

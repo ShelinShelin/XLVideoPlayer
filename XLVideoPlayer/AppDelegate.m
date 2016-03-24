@@ -2,12 +2,12 @@
 //  AppDelegate.m
 //  XLVideoPlayer
 //
-//  Created by Shelin on 16/2/1.
+//  Created by Shelin on 16/3/23.
 //  Copyright © 2016年 GreatGate. All rights reserved.
-//
+//  https://github.com/ShelinShelin
 
 #import "AppDelegate.h"
-#import "ViewController.h"
+#import "ExampleViewController.h"
 
 @interface AppDelegate ()
 
@@ -18,12 +18,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
+    
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.backgroundColor = [UIColor blackColor];
     [self.window makeKeyAndVisible];
     
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[ViewController alloc] init]];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:[[ExampleViewController alloc] init]];
     self.window.rootViewController = nav;
+    
     return YES;
 }
 

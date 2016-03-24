@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -15,8 +14,12 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="299.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="视频-----1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjI-O5-Eo7">
-                        <rect key="frame" x="15" y="265" width="42" height="19.5"/>
+                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频-----1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjI-O5-Eo7">
+                        <rect key="frame" x="15" y="265" width="80" height="19.5"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="19.5" id="HFk-Pq-nHD"/>
+                            <constraint firstAttribute="width" constant="80" id="YAt-nd-9aa"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
@@ -26,17 +29,16 @@
                         <color key="backgroundColor" red="0.87843137250000003" green="0.88235294119999996" blue="0.86274509799999999" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstAttribute="width" secondItem="FQ2-HL-ESY" secondAttribute="height" multiplier="207:125" id="ieQ-0g-96c"/>
+                            <constraint firstAttribute="height" constant="250" id="f0N-5X-Q1G"/>
                         </constraints>
                     </imageView>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="51i-gA-9Y5"/>
-                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="7wA-R1-hT7"/>
-                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="Ekw-sq-ECm"/>
-                    <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="d7v-cB-sG2"/>
-                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="jrg-hh-1BN"/>
-                    <constraint firstAttribute="bottom" secondItem="mjI-O5-Eo7" secondAttribute="bottom" constant="15" id="lIb-Cx-aQj"/>
+                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="97G-B2-Jun"/>
+                    <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="cVx-Gf-VGi"/>
+                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="h7J-sh-dpN"/>
+                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="hNm-ge-1H4"/>
+                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="rPI-YL-6gb"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>

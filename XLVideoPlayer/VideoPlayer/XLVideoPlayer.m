@@ -1,0 +1,529 @@
+//
+//  XLVideoPlayer.m
+//  XLVideoPlayer
+//
+//  Created by Shelin on 16/3/23.
+//  Copyright © 2016年 GreatGate. All rights reserved.
+//  https://github.com/ShelinShelin
+
+#import "XLVideoPlayer.h"
+#import "XLSlider.h"
+#import <AVFoundation/AVFoundation.h>
+
+#define kPlayerBackgroundColor [UIColor blackColor].CGColor
+#define kBarAnimateSpeed 0.5f
+#define kBarShowDuration 4.0f
+#define kOpacity 0.7f
+#define kTopBarHeight 44.0f
+#define kBottomBaHeight 40.0f
+#define kPlayBtnSideLength 60.0f
+
+@interface XLVideoPlayer () {
+    BOOL _isOriginalFrame;
+    BOOL _isFullScreen;
+    BOOL _barHiden;
+    BOOL _inOperation;
+}
+
+/**videoPlayer superView*/
+@property (nonatomic, strong) UIView *playSuprView;
+@property (nonatomic, strong) UIView *topBar;
+@property (nonatomic, strong) UIView *bottomBar;
+@property (nonatomic, strong) UIButton *playOrPauseBtn;
+@property (nonatomic, strong) UILabel *totalDurationLabel;
+@property (nonatomic, strong) UILabel *progressLabel;
+@property (nonatomic, strong) XLSlider *slider;
+@property (nonatomic, strong) UIWindow *keyWindow;
+@property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
+@property (nonatomic, assign) CGRect playerOriginalFrame;
+@property (nonatomic, strong) UIButton *zoomScreenBtn;
+
+@property (nonatomic, strong) AVPlayerLayer *playerLayer;
+/**video player*/
+@property (nonatomic,strong) AVPlayer *player;
+/**video url*/
+@property (nonatomic, strong) NSString *videoUrl;
+/**video total duration*/
+@property (nonatomic, assign) CGFloat totalDuration;
+
+@end
+
+@implementation XLVideoPlayer
+
+#pragma mark - public method
+
+- (instancetype)initWithVideoUrl:(NSString *)videoUrl {
+    if ([super init]) {
+        
+        self.backgroundColor = [UIColor blackColor];
+        
+        self.keyWindow = [UIApplication sharedApplication].keyWindow;
+        self.videoUrl = videoUrl;
+        
+        //screen orientation change
+        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+        
+        //show or hiden gestureRecognizer
+        UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenMenuBar:)];
+        [self addGestureRecognizer:tap];
+
+        [self.layer addSublayer:self.playerLayer];
+        [self addSubview:self.topBar];
+        [self addSubview:self.bottomBar];
+        [self addSubview:self.playOrPauseBtn];
+        
+        _barHiden = YES;
+    }
+    return self;
+}
+
+- (void)play {
+    [self.player play];
+}
+
+- (void)pause {
+    [self.player pause];
+}
+
+#pragma mark - layoutSubviews
+
+- (void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.playerLayer.frame = self.bounds;
+    if (!_isOriginalFrame) {
+        self.playerOriginalFrame = self.frame;
+        self.playSuprView = self.superview;
+        self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
+        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake(0, 0, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.playOrPauseBtn.center = self.center;
+    }
+    _isOriginalFrame = YES;
+}
+
+#pragma mark - lazy loading
+
+- (AVPlayerLayer *)playerLayer {
+    if (!_playerLayer) {
+        _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
+        _playerLayer.backgroundColor = kPlayerBackgroundColor;
+        _playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;//视频填充模式
+    }
+    return _playerLayer;
+}
+
+- (AVPlayer *)player{
+    if (!_player) {
+        AVPlayerItem *playerItem = [self getAVPlayItem];
+        _player = [AVPlayer playerWithPlayerItem:playerItem];
+        
+        [self addProgressObserver];
+        
+        [self addObserverToPlayerItem:playerItem];
+    }
+    return _player;
+}
+
+//initialize AVPlayerItem
+- (AVPlayerItem *)getAVPlayItem{
+    
+    if ([self.videoUrl rangeOfString:@"http"].location != NSNotFound) {
+        AVPlayerItem *playerItem=[AVPlayerItem playerItemWithURL:[NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
+        return playerItem;
+    }else{
+        AVAsset *movieAsset  = [[AVURLAsset alloc]initWithURL:[NSURL fileURLWithPath:self.videoUrl] options:nil];
+        AVPlayerItem *playerItem = [AVPlayerItem playerItemWithAsset:movieAsset];
+        return playerItem;
+    }
+}
+
+- (UIActivityIndicatorView *)activityIndicatorView {
+    if (!_activityIndicatorView) {
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] init];
+    }
+    return _activityIndicatorView;
+}
+
+- (UIView *)topBar {
+    if (!_topBar) {
+        _topBar = [[UIView alloc] init];
+        _topBar.backgroundColor = [UIColor blackColor];
+        _topBar.layer.opacity = 0.0f;
+        
+        UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        backBtn.translatesAutoresizingMaskIntoConstraints = NO;
+//        [backBtn setBackgroundImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
+        backBtn.contentMode = UIViewContentModeCenter;
+        [backBtn addTarget:self action:@selector(actionBack) forControlEvents:UIControlEventTouchDown];
+        [_topBar addSubview:backBtn];
+        
+        NSLayoutConstraint *btnWidth = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:40.0f];
+        NSLayoutConstraint *btnHeight = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:40.0f];
+        NSLayoutConstraint *btnLeft = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_topBar attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *btnCenterY = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_topBar attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0];
+        
+        [_topBar addConstraints:@[btnWidth, btnHeight, btnLeft, btnCenterY]];
+        
+    }
+    return _topBar;
+}
+
+- (UIView *)bottomBar {
+    if (!_bottomBar) {
+        _bottomBar = [[UIView alloc] init];
+        _bottomBar.backgroundColor = [UIColor blackColor];
+        _bottomBar.layer.opacity = 0.0f;
+        
+        UILabel *label1 = [[UILabel alloc] init];
+        label1.translatesAutoresizingMaskIntoConstraints = NO;
+        label1.textAlignment = NSTextAlignmentCenter;
+        label1.text = @"00:00:00";
+        label1.font = [UIFont systemFontOfSize:14.0f];
+        label1.textColor = [UIColor whiteColor];
+        [_bottomBar addSubview:label1];
+        self.progressLabel = label1;
+        
+        NSLayoutConstraint *label1Left = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Top = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Bottom = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint *label1Width = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:70.0f];
+        [_bottomBar addConstraints:@[label1Left, label1Top, label1Bottom, label1Width]];
+        
+        
+        UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        fullScreenBtn.translatesAutoresizingMaskIntoConstraints = NO;
+        fullScreenBtn.contentMode = UIViewContentModeCenter;
+        [fullScreenBtn setImage:[UIImage imageNamed:@"big"] forState:UIControlStateNormal];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"small"] forState:UIControlStateSelected];
+        [fullScreenBtn addTarget:self action:@selector(actionFullScreen) forControlEvents:UIControlEventTouchDown];
+        [_bottomBar addSubview:fullScreenBtn];
+        self.zoomScreenBtn = fullScreenBtn;
+        
+        NSLayoutConstraint *btnWidth = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:40.0f];
+        NSLayoutConstraint *btnHeight = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:40.0f];
+        NSLayoutConstraint *btnRight = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint *btnCenterY = [NSLayoutConstraint constraintWithItem:fullScreenBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0];
+        [_bottomBar addConstraints:@[btnWidth, btnHeight, btnRight, btnCenterY]];
+        
+        
+        UILabel *label2 = [[UILabel alloc] init];
+        label2.translatesAutoresizingMaskIntoConstraints = NO;
+        label2.textAlignment = NSTextAlignmentCenter;
+        label2.text = @"00:00:00";
+        label2.font = [UIFont systemFontOfSize:14.0f];
+        label2.textColor = [UIColor whiteColor];
+        [_bottomBar addSubview:label2];
+        self.totalDurationLabel = label2;
+
+        NSLayoutConstraint *label2Right = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:fullScreenBtn attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Top = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Bottom = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        NSLayoutConstraint *label2Width = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:70.0f];
+        [_bottomBar addConstraints:@[label2Right, label2Top, label2Bottom, label2Width]];
+        
+        
+        XLSlider *slider = [[XLSlider alloc] init];
+        slider.translatesAutoresizingMaskIntoConstraints = NO;
+        [_bottomBar addSubview:slider];
+        self.slider = slider;
+        slider.valueChangeBlock = ^(XLSlider *slider){
+            [self sliderValueChange:slider];
+        };
+        slider.finishChangeBlock = ^(XLSlider *slider){
+            [self finishChange];
+        };
+        slider.dragSliderBlock = ^(XLSlider *slider){
+            [self dragSlider];
+        };
+        
+        NSLayoutConstraint *sliderLeft = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:label1 attribute:NSLayoutAttributeRight multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderRight = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:label2 attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderTop = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
+        NSLayoutConstraint *sliderBottom = [NSLayoutConstraint constraintWithItem:slider attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
+        [_bottomBar addConstraints:@[sliderLeft, sliderRight, sliderTop, sliderBottom]];
+        
+        [self updateConstraintsIfNeeded];
+
+    }
+    return _bottomBar;
+}
+
+- (UIButton *)playOrPauseBtn {
+    if (!_playOrPauseBtn) {
+        _playOrPauseBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+        _playOrPauseBtn.layer.opacity = 0.0f;
+        _playOrPauseBtn.contentMode = UIViewContentModeCenter;
+        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
+        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateSelected];
+        [_playOrPauseBtn addTarget:self action:@selector(playOrPause:) forControlEvents:UIControlEventTouchDown];
+    }
+    return _playOrPauseBtn;
+}
+
+#pragma mark - status hiden
+
+- (void)setStatusBarHidden:(BOOL)hidden {
+    UIView *statusBar = [[[UIApplication sharedApplication] valueForKey:@"statusBarWindow"] valueForKey:@"statusBar"];
+    statusBar.hidden = hidden;
+}
+
+#pragma mark - Screen Orientation
+
+- (void)statusBarOrientationChange:(NSNotification *)notification {
+    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
+    if (orientation == UIDeviceOrientationLandscapeLeft) {
+//        NSLog(@"UIDeviceOrientationLandscapeLeft");
+        [self orientationLeftFullScreen];
+    }else if (orientation == UIDeviceOrientationLandscapeRight) {
+//        NSLog(@"UIDeviceOrientationLandscapeRight");
+        [self orientationRightFullScreen];
+    }else if (orientation == UIDeviceOrientationPortrait) {
+//        NSLog(@"UIDeviceOrientationPortrait");
+        [self smallScreen];
+    }
+}
+
+- (void)actionFullScreen {
+    if (!_isFullScreen) {
+        [self orientationRightFullScreen];
+    }else if (_isFullScreen) {
+        [self smallScreen];
+    }
+}
+
+- (void)orientationLeftFullScreen {
+    _isFullScreen = YES;
+    self.zoomScreenBtn.selected = YES;
+    [self.keyWindow addSubview:self];
+    
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationLandscapeLeft] forKey:@"orientation"];
+    [self updateConstraintsIfNeeded];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.transform = CGAffineTransformMakeRotation(M_PI / 2);
+        self.frame = self.keyWindow.bounds;
+        self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
+        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+    }];
+    
+    [self setStatusBarHidden:YES];
+}
+
+- (void)orientationRightFullScreen {
+    _isFullScreen = YES;
+    self.zoomScreenBtn.selected = YES;
+    [self.keyWindow addSubview:self];
+    
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationLandscapeRight] forKey:@"orientation"];
+    
+    [self updateConstraintsIfNeeded];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
+        self.frame = self.keyWindow.bounds;
+        self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
+        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+    }];
+    [self setStatusBarHidden:YES];
+}
+
+- (void)smallScreen {
+    _isFullScreen = NO;
+    self.zoomScreenBtn.selected = NO;
+    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
+    
+    [self.playSuprView addSubview:self];
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        self.transform = CGAffineTransformMakeRotation(0);
+        self.frame = CGRectMake(0, 0, 414, 250);
+        self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
+        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        [self updateConstraintsIfNeeded];
+    }];
+    [self setStatusBarHidden:NO];
+}
+
+#pragma mark - button action
+
+- (void)playOrPause:(UIButton *)btn {
+    if(self.player.rate == 0){      //pause
+        btn.selected = YES;
+        [self play];
+    }else if(self.player.rate == 1){    //playing
+        [self pause];
+        btn.selected = NO;
+    }
+}
+
+- (void)actionBack {
+    [self removeFromSuperview];
+}
+
+- (void)showOrHidenMenuBar:(UITapGestureRecognizer *)tapGesture {
+    if (_barHiden) {
+        [self show];
+    }else {
+        [self hiden];
+    }
+}
+
+- (void)show {
+    [UIView animateWithDuration:kBarAnimateSpeed animations:^{
+        self.topBar.layer.opacity = kOpacity;
+        self.bottomBar.layer.opacity = kOpacity;
+        self.playOrPauseBtn.layer.opacity = kOpacity;
+    } completion:^(BOOL finished) {
+        if (finished) {
+            _barHiden = !_barHiden;
+            [self performBlock:^{
+                if (!_barHiden && !_inOperation) {
+                    [self hiden];
+                }
+            } afterDelay:kBarShowDuration];
+        }
+    }];
+}
+
+- (void)hiden {
+    _inOperation = NO;
+    [UIView animateWithDuration:kBarAnimateSpeed animations:^{
+        self.topBar.layer.opacity = 0.0f;
+        self.bottomBar.layer.opacity = 0.0f;
+        self.playOrPauseBtn.layer.opacity = 0.0f;
+    } completion:^(BOOL finished){
+        if (finished) {
+            _barHiden = !_barHiden;
+        }
+    }];
+}
+
+#pragma mark - call back
+
+- (void)sliderValueChange:(XLSlider *)slider {
+    self.progressLabel.text = [self timeFormatted:slider.value * self.totalDuration];
+}
+
+- (void)finishChange {
+    _inOperation = NO;
+    [self hiden];
+    CMTime currentCMTime = CMTimeMake(self.slider.value * self.totalDuration, 1);
+    
+    [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
+        [self.player play];
+        self.playOrPauseBtn.selected = YES;
+    }];
+}
+
+- (void)dragSlider {
+    NSLog(@"dragSlider");
+    _inOperation = YES;
+    [self pause];
+}
+
+- (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
+    [self performSelector:@selector(callBlockAfterDelay:) withObject:block afterDelay:delay];
+}
+
+- (void)callBlockAfterDelay:(void (^)(void))block {
+    block();
+}
+
+#pragma mark - monitor video playing course
+
+-(void)addProgressObserver{
+    
+    //get current playerItem object
+    AVPlayerItem *playerItem = self.player.currentItem;
+    __weak typeof(self) weakSelf = self;
+    
+    //Set once per second
+    [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        float current = CMTimeGetSeconds(time);
+        float total = CMTimeGetSeconds([playerItem duration]);
+//        NSLog(@"already play ---- %.2fs.",current);
+        weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
+        if (current) {
+//            NSLog(@"%f", current / total);
+            weakSelf.slider.value = current / total;
+            //finish and loop playback
+            if (weakSelf.slider.value == 1) {
+                weakSelf.playOrPauseBtn.selected = NO;
+//                [weakSelf showOrHidenMenuBar];
+                CMTime currentCMTime = CMTimeMake(0, 1);
+                [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
+                    weakSelf.slider.value = 0.0f;
+                }];
+            }
+        }
+    }];
+}
+
+#pragma mark - PlayerItem （status，loadedTimeRanges）
+
+-(void)addObserverToPlayerItem:(AVPlayerItem *)playerItem{
+    
+    //监控状态属性，注意AVPlayer也有一个status属性，通过监控它的status也可以获得播放状态
+    [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
+    //network loading progress
+    [playerItem addObserver:self forKeyPath:@"loadedTimeRanges" options:NSKeyValueObservingOptionNew context:nil];
+}
+
+/**
+ *  通过KVO监控播放器状态
+ *
+ *  @param keyPath 监控属性
+ *  @param object  监视器
+ *  @param change  状态改变
+ *  @param context 上下文
+ */
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
+    AVPlayerItem *playerItem = object;
+    if ([keyPath isEqualToString:@"status"]) {
+        AVPlayerStatus status = [[change objectForKey:@"new"] intValue];
+        if(status == AVPlayerStatusReadyToPlay){
+//            NSLog(@"正在播放...，视频总长度:%.2f",CMTimeGetSeconds(playerItem.duration));
+            self.totalDuration = CMTimeGetSeconds(playerItem.duration);
+            self.totalDurationLabel.text = [self timeFormatted:self.totalDuration];
+        }
+    }else if([keyPath isEqualToString:@"loadedTimeRanges"]){
+        NSArray *array = playerItem.loadedTimeRanges;
+        CMTimeRange timeRange = [array.firstObject CMTimeRangeValue];//本次缓冲时间范围
+        float startSeconds = CMTimeGetSeconds(timeRange.start);
+        float durationSeconds = CMTimeGetSeconds(timeRange.duration);
+        NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
+        self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
+//        NSLog(@"%f",self.slider.middleValue);
+//        NSLog(@"totalBuffer：%.2f",totalBuffer);
+        //remove loading animation
+        if (self.slider.middleValue < self.slider.value) {
+            [self addSubview:self.activityIndicatorView];
+            [self.activityIndicatorView startAnimating];
+            
+        }else if(self.slider.middleValue >= self.slider.value) {
+            [self.activityIndicatorView removeFromSuperview];
+        }
+    }
+}
+
+
+#pragma mark - timeFormat
+
+- (NSString *)timeFormatted:(int)totalSeconds {
+    int seconds = totalSeconds % 60;
+    int minutes = (totalSeconds / 60) % 60;
+    int hours = totalSeconds / 3600;
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    NSLog(@"dealloc");
+}
+
+@end

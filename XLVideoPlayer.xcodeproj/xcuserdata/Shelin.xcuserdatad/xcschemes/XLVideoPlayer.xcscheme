@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0720"
+   LastUpgradeVersion = "0710"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FDCEFA7E1C5F4FBF0043329E"
+               BlueprintIdentifier = "FD4ABC4C1CA2AD62003BD910"
                BuildableName = "XLVideoPlayer.app"
                BlueprintName = "XLVideoPlayer"
                ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
@@ -32,7 +32,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FDCEFA971C5F4FBF0043329E"
+               BlueprintIdentifier = "FD4ABC651CA2AD62003BD910"
                BuildableName = "XLVideoPlayerTests.xctest"
                BlueprintName = "XLVideoPlayerTests"
                ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
@@ -42,7 +42,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FDCEFAA21C5F4FBF0043329E"
+               BlueprintIdentifier = "FD4ABC701CA2AD62003BD910"
                BuildableName = "XLVideoPlayerUITests.xctest"
                BlueprintName = "XLVideoPlayerUITests"
                ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
@@ -52,7 +52,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "FDCEFA7E1C5F4FBF0043329E"
+            BlueprintIdentifier = "FD4ABC4C1CA2AD62003BD910"
             BuildableName = "XLVideoPlayer.app"
             BlueprintName = "XLVideoPlayer"
             ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
@@ -75,7 +75,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "FDCEFA7E1C5F4FBF0043329E"
+            BlueprintIdentifier = "FD4ABC4C1CA2AD62003BD910"
             BuildableName = "XLVideoPlayer.app"
             BlueprintName = "XLVideoPlayer"
             ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
@@ -94,7 +94,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "FDCEFA7E1C5F4FBF0043329E"
+            BlueprintIdentifier = "FD4ABC4C1CA2AD62003BD910"
             BuildableName = "XLVideoPlayer.app"
             BlueprintName = "XLVideoPlayer"
             ReferencedContainer = "container:XLVideoPlayer.xcodeproj">
