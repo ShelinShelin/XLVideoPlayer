@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE52FCF71851D31AC776D14A /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C1917B6C3CFD4EC8BD92887 /* libPods.a */; };
 		FD4ABC521CA2AD62003BD910 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC511CA2AD62003BD910 /* main.m */; };
 		FD4ABC551CA2AD62003BD910 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC541CA2AD62003BD910 /* AppDelegate.m */; };
 		FD4ABC581CA2AD62003BD910 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC571CA2AD62003BD910 /* ViewController.m */; };
@@ -22,6 +23,8 @@
 		FD4ABC931CA2B828003BD910 /* XLVideoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FD4ABC911CA2B828003BD910 /* XLVideoCell.xib */; };
 		FD4ABC961CA2B9B9003BD910 /* XLVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC951CA2B9B9003BD910 /* XLVideoPlayer.m */; };
 		FD4ABC9C1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV in Resources */ = {isa = PBXBuildFile; fileRef = FD4ABC9B1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV */; };
+		FD8048491CA409FE0095254D /* VideoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD8048481CA409FE0095254D /* VideoDetailViewController.m */; };
+		FDE44D441CA40785004799D7 /* XLVideoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE44D431CA40785004799D7 /* XLVideoItem.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +45,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C1917B6C3CFD4EC8BD92887 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		437BA5872AAC2254AC079B9A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		AF31730470DA2F862EA11E25 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		FD4ABC4D1CA2AD62003BD910 /* XLVideoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XLVideoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD4ABC511CA2AD62003BD910 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FD4ABC531CA2AD62003BD910 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -69,6 +75,10 @@
 		FD4ABC941CA2B9B9003BD910 /* XLVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoPlayer.h; sourceTree = "<group>"; };
 		FD4ABC951CA2B9B9003BD910 /* XLVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLVideoPlayer.m; sourceTree = "<group>"; };
 		FD4ABC9B1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = thaiPhuketKaronBeach.MOV; sourceTree = "<group>"; };
+		FD8048471CA409FE0095254D /* VideoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDetailViewController.h; sourceTree = "<group>"; };
+		FD8048481CA409FE0095254D /* VideoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoDetailViewController.m; sourceTree = "<group>"; };
+		FDE44D421CA40785004799D7 /* XLVideoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoItem.h; sourceTree = "<group>"; };
+		FDE44D431CA40785004799D7 /* XLVideoItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLVideoItem.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE52FCF71851D31AC776D14A /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -96,6 +107,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4EE071BE86F0E34B808514F4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1C1917B6C3CFD4EC8BD92887 /* libPods.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		69632851BF8440090BA31F09 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				437BA5872AAC2254AC079B9A /* Pods.debug.xcconfig */,
+				AF31730470DA2F862EA11E25 /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		FD4ABC441CA2AD62003BD910 = {
 			isa = PBXGroup;
 			children = (
@@ -103,6 +131,8 @@
 				FD4ABC691CA2AD62003BD910 /* XLVideoPlayerTests */,
 				FD4ABC741CA2AD62003BD910 /* XLVideoPlayerUITests */,
 				FD4ABC4E1CA2AD62003BD910 /* Products */,
+				69632851BF8440090BA31F09 /* Pods */,
+				4EE071BE86F0E34B808514F4 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -119,6 +149,7 @@
 		FD4ABC4F1CA2AD62003BD910 /* XLVideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				FDE44D411CA4076B004799D7 /* Model */,
 				FD4ABC8E1CA2B820003BD910 /* View */,
 				FD4ABC841CA2ADE5003BD910 /* VideoPlayer */,
 				FD4ABC831CA2ADCB003BD910 /* ViewControllers */,
@@ -168,6 +199,8 @@
 				FD4ABC891CA2B7BF003BD910 /* ExampleViewController.h */,
 				FD4ABC8A1CA2B7BF003BD910 /* ExampleViewController.m */,
 				FD4ABC8B1CA2B7BF003BD910 /* ExampleViewController.xib */,
+				FD8048471CA409FE0095254D /* VideoDetailViewController.h */,
+				FD8048481CA409FE0095254D /* VideoDetailViewController.m */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -201,6 +234,15 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		FDE44D411CA4076B004799D7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				FDE44D421CA40785004799D7 /* XLVideoItem.h */,
+				FDE44D431CA40785004799D7 /* XLVideoItem.m */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -208,9 +250,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FD4ABC7A1CA2AD62003BD910 /* Build configuration list for PBXNativeTarget "XLVideoPlayer" */;
 			buildPhases = (
+				2F26A5B83B90DCFFACE4A66A /* Check Pods Manifest.lock */,
 				FD4ABC491CA2AD62003BD910 /* Sources */,
 				FD4ABC4A1CA2AD62003BD910 /* Frameworks */,
 				FD4ABC4B1CA2AD62003BD910 /* Resources */,
+				5A647FFC8BBF012778E7C8BA /* Embed Pods Frameworks */,
+				7A75AB0F376F9484E4D032EE /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -330,13 +375,63 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2F26A5B83B90DCFFACE4A66A /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		5A647FFC8BBF012778E7C8BA /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7A75AB0F376F9484E4D032EE /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FD4ABC491CA2AD62003BD910 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD8048491CA409FE0095254D /* VideoDetailViewController.m in Sources */,
 				FD4ABC881CA2B773003BD910 /* XLSlider.m in Sources */,
 				FD4ABC961CA2B9B9003BD910 /* XLVideoPlayer.m in Sources */,
+				FDE44D441CA40785004799D7 /* XLVideoItem.m in Sources */,
 				FD4ABC581CA2AD62003BD910 /* ViewController.m in Sources */,
 				FD4ABC8C1CA2B7BF003BD910 /* ExampleViewController.m in Sources */,
 				FD4ABC921CA2B828003BD910 /* XLVideoCell.m in Sources */,
@@ -478,6 +573,7 @@
 		};
 		FD4ABC7B1CA2AD62003BD910 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 437BA5872AAC2254AC079B9A /* Pods.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -486,11 +582,13 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatgate.XLVideoPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
 			};
 			name = Debug;
 		};
 		FD4ABC7C1CA2AD62003BD910 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF31730470DA2F862EA11E25 /* Pods.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
@@ -499,6 +597,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.greatgate.XLVideoPlayer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				USER_HEADER_SEARCH_PATHS = "${SRCROOT}/**";
 			};
 			name = Release;
 		};
@@ -569,6 +668,7 @@
 				FD4ABC7C1CA2AD62003BD910 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FD4ABC7D1CA2AD62003BD910 /* Build configuration list for PBXNativeTarget "XLVideoPlayerTests" */ = {
 			isa = XCConfigurationList;
@@ -577,6 +677,7 @@
 				FD4ABC7F1CA2AD62003BD910 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FD4ABC801CA2AD62003BD910 /* Build configuration list for PBXNativeTarget "XLVideoPlayerUITests" */ = {
 			isa = XCConfigurationList;
@@ -585,6 +686,7 @@
 				FD4ABC821CA2AD62003BD910 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -14,7 +14,7 @@
 #define kBarAnimateSpeed 0.5f
 #define kBarShowDuration 4.0f
 #define kOpacity 0.7f
-#define kTopBarHeight 44.0f
+#define kTopBarHeight 40.0f
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
 
@@ -100,9 +100,9 @@
         self.playSuprView = self.superview;
         self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
-        self.playOrPauseBtn.frame = CGRectMake(0, 0, kPlayBtnSideLength, kPlayBtnSideLength);
-        self.playOrPauseBtn.center = self.center;
+        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = self.center;
+        self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
     }
     _isOriginalFrame = YES;
 }
@@ -346,7 +346,8 @@
     
     [UIView animateWithDuration:0.5 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
-        self.frame = CGRectMake(0, 0, 414, 250);
+//        self.frame = CGRectMake(0, 0, 414, 250);
+        self.frame = self.playerOriginalFrame;
         self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
@@ -420,7 +421,7 @@
     _inOperation = NO;
     [self hiden];
     CMTime currentCMTime = CMTimeMake(self.slider.value * self.totalDuration, 1);
-    
+
     [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
         [self.player play];
         self.playOrPauseBtn.selected = YES;
@@ -510,6 +511,7 @@
             [self addSubview:self.activityIndicatorView];
             [self.activityIndicatorView startAnimating];
         }else if(self.slider.middleValue >= self.slider.value) {
+            [self play];
             [self.activityIndicatorView removeFromSuperview];
         }
     }

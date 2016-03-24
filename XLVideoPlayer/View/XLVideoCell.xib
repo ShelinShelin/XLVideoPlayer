@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
@@ -15,14 +16,19 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频-----1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjI-O5-Eo7">
-                        <rect key="frame" x="15" y="265" width="80" height="19.5"/>
+                        <rect key="frame" x="15" y="265" width="75.5" height="19.5"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="19.5" id="HFk-Pq-nHD"/>
-                            <constraint firstAttribute="width" constant="80" id="YAt-nd-9aa"/>
+                            <constraint firstAttribute="width" constant="300" id="YAt-nd-9aa"/>
                         </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="YAt-nd-9aa"/>
+                            </mask>
+                        </variation>
                     </label>
                     <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FQ2-HL-ESY">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
@@ -30,12 +36,35 @@
                         <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="height" constant="250" id="f0N-5X-Q1G"/>
+                            <constraint firstAttribute="width" secondItem="FQ2-HL-ESY" secondAttribute="height" multiplier="207:125" id="q6Z-aL-Cl1"/>
+                        </constraints>
+                        <variation key="default">
+                            <mask key="constraints">
+                                <exclude reference="f0N-5X-Q1G"/>
+                            </mask>
+                        </variation>
+                    </imageView>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_play_btn_bg" translatesAutoresizingMaskIntoConstraints="NO" id="NGA-4N-Upu">
+                        <rect key="frame" x="177" y="95" width="60" height="60"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="60" id="8UD-to-Z7U"/>
+                            <constraint firstAttribute="height" constant="60" id="nQ6-iN-0ef"/>
                         </constraints>
                     </imageView>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频详情" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="od5-E7-0oU">
+                        <rect key="frame" x="340" y="265" width="64" height="19.5"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
                     <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="97G-B2-Jun"/>
+                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="OxT-wp-ygF"/>
+                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerY" secondItem="FQ2-HL-ESY" secondAttribute="centerY" id="Z9S-Pc-ftl"/>
+                    <constraint firstItem="od5-E7-0oU" firstAttribute="centerY" secondItem="mjI-O5-Eo7" secondAttribute="centerY" id="adX-D5-XN6"/>
                     <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="cVx-Gf-VGi"/>
+                    <constraint firstAttribute="trailing" secondItem="od5-E7-0oU" secondAttribute="trailing" constant="10" id="egE-5W-LBZ"/>
                     <constraint firstItem="mjI-O5-Eo7" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="h7J-sh-dpN"/>
                     <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="hNm-ge-1H4"/>
                     <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="rPI-YL-6gb"/>
@@ -43,7 +72,11 @@
             </tableViewCellContentView>
             <connections>
                 <outlet property="videoImageView" destination="FQ2-HL-ESY" id="gim-so-eri"/>
+                <outlet property="videoTitle" destination="mjI-O5-Eo7" id="cLr-Te-ky6"/>
             </connections>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="video_play_btn_bg" width="64" height="64"/>
+    </resources>
 </document>

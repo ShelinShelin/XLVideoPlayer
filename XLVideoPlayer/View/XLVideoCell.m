@@ -7,6 +7,12 @@
 //  https://github.com/ShelinShelin
 
 #import "XLVideoCell.h"
+#import "XLVideoItem.h"
+#import "UIImageView+WebCache.h"
+
+@interface XLVideoCell ()
+
+@end
 
 @implementation XLVideoCell
 
@@ -16,7 +22,18 @@
     if (!cell) {
         cell = [[NSBundle mainBundle] loadNibNamed:@"XLVideoCell" owner:nil options:nil].lastObject;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        
+        
     }
+    
     return cell;
 }
+
+- (void)setVideoItem:(XLVideoItem *)videoItem {
+    _videoItem = videoItem;
+    self.videoTitle.text = videoItem.title;
+    [self.videoImageView sd_setImageWithURL:[NSURL URLWithString:videoItem.cover]];
+}
+
+
 @end
