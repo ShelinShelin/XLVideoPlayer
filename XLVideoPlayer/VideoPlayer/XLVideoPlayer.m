@@ -75,11 +75,12 @@
     
     [self.layer addSublayer:self.playerLayer];
     //play from start
+    [self addSubview:self.activityIndicatorView];
+    [self.activityIndicatorView startAnimating];
     [self playOrPause:self.playOrPauseBtn];
     [self addSubview:self.bottomBar];
     [self addSubview:self.playOrPauseBtn];
-    [self addSubview:self.activityIndicatorView];
-    [self.activityIndicatorView startAnimating];
+    
 }
 
 #pragma mark - layoutSubviews
