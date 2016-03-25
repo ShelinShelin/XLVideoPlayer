@@ -5,6 +5,7 @@
 //  Created by Shelin on 16/3/23.
 //  Copyright © 2016年 GreatGate. All rights reserved.
 //  https://github.com/ShelinShelin
+//  博客：http://www.jianshu.com/users/edad244257e2/latest_articles
 
 #import "ExampleViewController.h"
 #import "VideoDetailViewController.h"
@@ -110,7 +111,8 @@
 
     UIView *view = tapGesture.view;
     XLVideoItem *item = self.videoArray[view.tag - 100];
-    _player = [[XLVideoPlayer alloc] initWithVideoUrl:item.mp4_url];
+    _player = [[XLVideoPlayer alloc] init];
+    _player.videoUrl = item.mp4_url;
     _player.frame = view.bounds;
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
     XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];

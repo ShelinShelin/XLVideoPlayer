@@ -5,6 +5,7 @@
 //  Created by Shelin on 16/3/23.
 //  Copyright © 2016年 GreatGate. All rights reserved.
 //  https://github.com/ShelinShelin
+//  博客：http://www.jianshu.com/users/edad244257e2/latest_articles
 
 #import <UIKit/UIKit.h>
 @class XLVideoPlayer;
@@ -14,9 +15,7 @@ typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 @interface XLVideoPlayer : UIView
 
 @property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
-
-//@property (nonatomic, strong) NSString *videoUrl;
-
-- (instancetype)initWithVideoUrl:(NSString *)videoUrl;
+/**video url*/
+@property (nonatomic, strong) NSString *videoUrl;
 
 @end

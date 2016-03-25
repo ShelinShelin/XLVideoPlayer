@@ -5,6 +5,7 @@
 //  Created by Shelin on 16/3/23.
 //  Copyright © 2016年 GreatGate. All rights reserved.
 //  https://github.com/ShelinShelin
+//  博客：http://www.jianshu.com/users/edad244257e2/latest_articles
 
 #import "XLVideoPlayer.h"
 #import "XLSlider.h"
@@ -12,7 +13,7 @@
 
 #define kPlayerBackgroundColor [UIColor blackColor].CGColor
 #define kBarAnimateSpeed 0.5f
-#define kBarShowDuration 3.0f
+#define kBarShowDuration 4.0f
 #define kOpacity 0.7f
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
@@ -40,8 +41,6 @@
 @property (nonatomic, strong) AVPlayerLayer *playerLayer;
 /**video player*/
 @property (nonatomic,strong) AVPlayer *player;
-/**video url*/
-@property (nonatomic, strong) NSString *videoUrl;
 /**video total duration*/
 @property (nonatomic, assign) CGFloat totalDuration;
 
@@ -51,14 +50,13 @@
 
 #pragma mark - public method
 
-- (instancetype)initWithVideoUrl:(NSString *)videoUrl {
+- (instancetype)init {
     if ([super init]) {
         
         self.backgroundColor = [UIColor blackColor];
         
         self.keyWindow = [UIApplication sharedApplication].keyWindow;
-        self.videoUrl = videoUrl;
-        
+
         //screen orientation change
         [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusBarOrientationChange:) name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
@@ -66,27 +64,23 @@
         //show or hiden gestureRecognizer
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenBar)];
         [self addGestureRecognizer:tap];
-
-        [self.layer addSublayer:self.playerLayer];
-        [self addSubview:self.bottomBar];
-        [self addSubview:self.playOrPauseBtn];
-        [self addSubview:self.activityIndicatorView];
-        [self.activityIndicatorView startAnimating];
-        //play from start
-        [self playOrPause:self.playOrPauseBtn];
         
         _barHiden = YES;
     }
     return self;
 }
 
-//- (void)play {
-//    [self.player play];
-//}
-//
-//- (void)pause {
-//    [self.player pause];
-//}
+- (void)setVideoUrl:(NSString *)videoUrl {
+    _videoUrl = videoUrl;
+    
+    [self.layer addSublayer:self.playerLayer];
+    //play from start
+    [self playOrPause:self.playOrPauseBtn];
+    [self addSubview:self.bottomBar];
+    [self addSubview:self.playOrPauseBtn];
+    [self addSubview:self.activityIndicatorView];
+    [self.activityIndicatorView startAnimating];
+}
 
 #pragma mark - layoutSubviews
 
@@ -94,6 +88,7 @@
     [super layoutSubviews];
     
     self.playerLayer.frame = self.bounds;
+    
     if (!_isOriginalFrame) {
         self.playerOriginalFrame = self.frame;
         self.playSuprView = self.superview;
@@ -131,7 +126,7 @@
 //initialize AVPlayerItem
 - (AVPlayerItem *)getAVPlayItem{
     
-    NSAssert(self.videoUrl != nil, @"必须传入视频URL！");
+    NSAssert(self.videoUrl != nil, @"必须先传入视频url！！！");
     
     if ([self.videoUrl rangeOfString:@"http"].location != NSNotFound) {
         AVPlayerItem *playerItem=[AVPlayerItem playerItemWithURL:[NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
