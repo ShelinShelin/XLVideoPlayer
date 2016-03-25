@@ -103,7 +103,6 @@
         self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
-        self.activityIndicatorView.center = self.center;
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
     }
     _isOriginalFrame = YES;
@@ -148,7 +147,7 @@
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] init];
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     }
     return _activityIndicatorView;
 }
@@ -296,7 +295,7 @@
 - (void)actionFullScreen {
     if (!_isFullScreen) {
         [self orientationRightFullScreen];
-    }else if (_isFullScreen) {
+    }else {
         [self smallScreen];
     }
 }
@@ -431,8 +430,8 @@
     }];
 }
 
+//Dragging the thumb to suspend video playback
 - (void)dragSlider {
-    NSLog(@"dragSlider");
     _inOperation = YES;
     [self.player pause];;
 }
@@ -455,21 +454,25 @@
     
     //Set once per second
     [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+        
         float current = CMTimeGetSeconds(time);
         float total = CMTimeGetSeconds([playerItem duration]);
-//        NSLog(@"already play ---- %.2fs.",current);
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
 //            NSLog(@"%f", current / total);
             weakSelf.slider.value = current / total;
-            //finish and loop playback
-            if (weakSelf.slider.value == 1) {
-                weakSelf.playOrPauseBtn.selected = NO;
-                [weakSelf showOrHidenBar];
-                CMTime currentCMTime = CMTimeMake(0, 1);
-                [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
-                    weakSelf.slider.value = 0.0f;
-                }];
+            
+            if (weakSelf.slider.value == 1) {      //complete block
+                if (weakSelf.completedPlayingBlock) {
+                    weakSelf.completedPlayingBlock(weakSelf);
+                }else {       //finish and loop playback
+                    weakSelf.playOrPauseBtn.selected = NO;
+                    [weakSelf showOrHidenBar];
+                    CMTime currentCMTime = CMTimeMake(0, 1);
+                    [weakSelf.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
+                        weakSelf.slider.value = 0.0f;
+                    }];
+                }
             }
         }
     }];
@@ -510,10 +513,11 @@
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
 //        NSLog(@"totalBuffer：%.2f",totalBuffer);
         //remove loading animation
-        if (self.slider.middleValue < self.slider.value) {
+        if (self.slider.middleValue <= self.slider.value) {
+            self.activityIndicatorView.center = self.center;
             [self addSubview:self.activityIndicatorView];
             [self.activityIndicatorView startAnimating];
-        }else if(self.slider.middleValue >= self.slider.value) {
+        }else {
             [self.activityIndicatorView removeFromSuperview];
         }
     }

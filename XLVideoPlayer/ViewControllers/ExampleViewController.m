@@ -18,9 +18,10 @@
 
 #define videoListUrl @"http://c.3g.163.com/nc/video/list/VAP4BFR16/y/0-10.html"
 
-@interface ExampleViewController () <UITableViewDataSource, UITableViewDelegate> {
+@interface ExampleViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate> {
     NSIndexPath *_indexPath;
     XLVideoPlayer *_player;
+    CGRect _currentPlayCellRect;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *exampleTableView;
@@ -53,7 +54,7 @@
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] init];
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
     }
     return _activityIndicatorView;
 }
@@ -63,9 +64,10 @@
     // Do any additional setup after loading the view from its nib.
     
     self.exampleTableView.rowHeight = 300;
-    
-    self.activityIndicatorView.center = self.view.center;
-    [[UIApplication sharedApplication].keyWindow addSubview:self.activityIndicatorView];
+
+    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
+    self.activityIndicatorView.center = keyWindow.center;
+    [keyWindow addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
 
     [self fetchVideoListData];
@@ -73,12 +75,17 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [_player removeFromSuperview];
+    [self destroyVideoPlayer];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)destroyVideoPlayer {
+    [_player removeFromSuperview];
+    _player = nil;
 }
 
 #pragma mark - network
@@ -101,6 +108,8 @@
 }
 
 - (void)showView:(UITapGestureRecognizer *)tapGesture {
+    [self destroyVideoPlayer];
+
     UIView *view = tapGesture.view;
     XLVideoItem *item = self.videoArray[view.tag - 100];
     _player = [[XLVideoPlayer alloc] initWithVideoUrl:item.mp4_url];
@@ -108,6 +117,11 @@
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
     XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];
     [cell.contentView addSubview:_player];
+    _currentPlayCellRect = [self.exampleTableView rectForRowAtIndexPath:indexPath];
+    _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
+        [player removeFromSuperview];
+        player = nil;
+    };
 }
 
 
@@ -138,5 +152,24 @@
     [self.navigationController pushViewController:videoDetailViewController animated:YES];
 }
 
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([scrollView isEqual:self.exampleTableView]) {
+        
+        CGFloat cellBottom = _currentPlayCellRect.origin.y + _currentPlayCellRect.size.height;
+        if (scrollView.contentOffset.y > cellBottom) {
+            if (_player) {
+                [self destroyVideoPlayer];
+            }
+            return;
+        }
+        CGFloat cellUp = _currentPlayCellRect.origin.y;
+        if (cellUp > scrollView.contentOffset.y + scrollView.frame.size.height) {
+            if (_player) {
+                [self destroyVideoPlayer];
+            }
+            return;
+        }
+    }
+}
 
 @end

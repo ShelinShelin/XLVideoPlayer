@@ -226,7 +226,7 @@ static CGFloat panDistance;
 
 - (UIColor *)middleColor {
     if (!_middleColor) {
-        return  [UIColor lightGrayColor];
+        return  [UIColor darkGrayColor];
     }
     return _middleColor;
 }

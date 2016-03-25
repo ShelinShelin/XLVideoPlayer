@@ -35,8 +35,8 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    
     [_player removeFromSuperview];
+    _player = nil;
 }
 
 - (void)didReceiveMemoryWarning {
