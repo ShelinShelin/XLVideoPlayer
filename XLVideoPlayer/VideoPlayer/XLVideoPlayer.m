@@ -14,7 +14,6 @@
 #define kBarAnimateSpeed 0.5f
 #define kBarShowDuration 3.0f
 #define kOpacity 0.7f
-#define kTopBarHeight 40.0f
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
 
@@ -27,7 +26,6 @@
 
 /**videoPlayer superView*/
 @property (nonatomic, strong) UIView *playSuprView;
-@property (nonatomic, strong) UIView *topBar;
 @property (nonatomic, strong) UIView *bottomBar;
 @property (nonatomic, strong) UIButton *playOrPauseBtn;
 @property (nonatomic, strong) UILabel *totalDurationLabel;
@@ -70,7 +68,6 @@
         [self addGestureRecognizer:tap];
 
         [self.layer addSublayer:self.playerLayer];
-        [self addSubview:self.topBar];
         [self addSubview:self.bottomBar];
         [self addSubview:self.playOrPauseBtn];
         [self addSubview:self.activityIndicatorView];
@@ -100,7 +97,6 @@
     if (!_isOriginalFrame) {
         self.playerOriginalFrame = self.frame;
         self.playSuprView = self.superview;
-        self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
@@ -135,6 +131,8 @@
 //initialize AVPlayerItem
 - (AVPlayerItem *)getAVPlayItem{
     
+    NSAssert(self.videoUrl != nil, @"必须传入视频URL！");
+    
     if ([self.videoUrl rangeOfString:@"http"].location != NSNotFound) {
         AVPlayerItem *playerItem=[AVPlayerItem playerItemWithURL:[NSURL URLWithString:[self.videoUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]];
         return playerItem;
@@ -150,30 +148,6 @@
         _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
     }
     return _activityIndicatorView;
-}
-
-- (UIView *)topBar {
-    if (!_topBar) {
-        _topBar = [[UIView alloc] init];
-        _topBar.backgroundColor = [UIColor blackColor];
-        _topBar.layer.opacity = 0.0f;
-        
-        UIButton *backBtn = [UIButton buttonWithType:UIButtonTypeCustom];
-        backBtn.translatesAutoresizingMaskIntoConstraints = NO;
-//        [backBtn setBackgroundImage:[UIImage imageNamed:@"close"] forState:UIControlStateNormal];
-        backBtn.contentMode = UIViewContentModeCenter;
-        [backBtn addTarget:self action:@selector(actionBack) forControlEvents:UIControlEventTouchDown];
-        [_topBar addSubview:backBtn];
-        
-        NSLayoutConstraint *btnWidth = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:40.0f];
-        NSLayoutConstraint *btnHeight = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0f constant:40.0f];
-        NSLayoutConstraint *btnLeft = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_topBar attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
-        NSLayoutConstraint *btnCenterY = [NSLayoutConstraint constraintWithItem:backBtn attribute:NSLayoutAttributeCenterY relatedBy:NSLayoutRelationEqual toItem:_topBar attribute:NSLayoutAttributeCenterY multiplier:1.0f constant:0];
-        
-        [_topBar addConstraints:@[btnWidth, btnHeight, btnLeft, btnCenterY]];
-        
-    }
-    return _topBar;
 }
 
 - (UIView *)bottomBar {
@@ -311,7 +285,6 @@
     [UIView animateWithDuration:0.5 animations:^{
         self.transform = CGAffineTransformMakeRotation(M_PI / 2);
         self.frame = self.keyWindow.bounds;
-        self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
@@ -332,7 +305,6 @@
     [UIView animateWithDuration:0.5 animations:^{
         self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
         self.frame = self.keyWindow.bounds;
-        self.topBar.frame = CGRectMake(0, 0, self.keyWindow.bounds.size.height, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
@@ -350,7 +322,6 @@
     [UIView animateWithDuration:0.5 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
         self.frame = self.playerOriginalFrame;
-        self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
@@ -385,7 +356,6 @@
 
 - (void)show {
     [UIView animateWithDuration:kBarAnimateSpeed animations:^{
-        self.topBar.layer.opacity = kOpacity;
         self.bottomBar.layer.opacity = kOpacity;
         self.playOrPauseBtn.layer.opacity = kOpacity;
     } completion:^(BOOL finished) {
@@ -403,7 +373,6 @@
 - (void)hiden {
     _inOperation = NO;
     [UIView animateWithDuration:kBarAnimateSpeed animations:^{
-        self.topBar.layer.opacity = 0.0f;
         self.bottomBar.layer.opacity = 0.0f;
         self.playOrPauseBtn.layer.opacity = 0.0f;
     } completion:^(BOOL finished){
@@ -431,6 +400,7 @@
 }
 
 //Dragging the thumb to suspend video playback
+
 - (void)dragSlider {
     _inOperation = YES;
     [self.player pause];;

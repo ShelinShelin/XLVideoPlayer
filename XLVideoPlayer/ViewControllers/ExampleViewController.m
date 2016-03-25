@@ -14,8 +14,6 @@
 #import "AFNetworking.h"
 #import "MJExtension.h"
 
-#define videoUrl [[NSBundle mainBundle] pathForResource:@"thaiPhuketKaronBeach" ofType:@"MOV"]
-
 #define videoListUrl @"http://c.3g.163.com/nc/video/list/VAP4BFR16/y/0-10.html"
 
 @interface ExampleViewController () <UITableViewDataSource, UITableViewDelegate, UIScrollViewDelegate> {
@@ -151,6 +149,8 @@
     videoDetailViewController.mp4_url = item.mp4_url;
     [self.navigationController pushViewController:videoDetailViewController animated:YES];
 }
+
+#pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:self.exampleTableView]) {

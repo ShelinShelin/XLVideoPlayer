@@ -22,7 +22,6 @@
 		FD4ABC921CA2B828003BD910 /* XLVideoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC901CA2B828003BD910 /* XLVideoCell.m */; };
 		FD4ABC931CA2B828003BD910 /* XLVideoCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = FD4ABC911CA2B828003BD910 /* XLVideoCell.xib */; };
 		FD4ABC961CA2B9B9003BD910 /* XLVideoPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC951CA2B9B9003BD910 /* XLVideoPlayer.m */; };
-		FD4ABC9C1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV in Resources */ = {isa = PBXBuildFile; fileRef = FD4ABC9B1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV */; };
 		FD8048491CA409FE0095254D /* VideoDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD8048481CA409FE0095254D /* VideoDetailViewController.m */; };
 		FDE44D441CA40785004799D7 /* XLVideoItem.m in Sources */ = {isa = PBXBuildFile; fileRef = FDE44D431CA40785004799D7 /* XLVideoItem.m */; };
 /* End PBXBuildFile section */
@@ -74,7 +73,6 @@
 		FD4ABC911CA2B828003BD910 /* XLVideoCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = XLVideoCell.xib; sourceTree = "<group>"; };
 		FD4ABC941CA2B9B9003BD910 /* XLVideoPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoPlayer.h; sourceTree = "<group>"; };
 		FD4ABC951CA2B9B9003BD910 /* XLVideoPlayer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XLVideoPlayer.m; sourceTree = "<group>"; };
-		FD4ABC9B1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV */ = {isa = PBXFileReference; lastKnownFileType = video.quicktime; path = thaiPhuketKaronBeach.MOV; sourceTree = "<group>"; };
 		FD8048471CA409FE0095254D /* VideoDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VideoDetailViewController.h; sourceTree = "<group>"; };
 		FD8048481CA409FE0095254D /* VideoDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VideoDetailViewController.m; sourceTree = "<group>"; };
 		FDE44D421CA40785004799D7 /* XLVideoItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XLVideoItem.h; sourceTree = "<group>"; };
@@ -164,7 +162,6 @@
 		FD4ABC501CA2AD62003BD910 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				FD4ABC9B1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV */,
 				FD4ABC5E1CA2AD62003BD910 /* LaunchScreen.storyboard */,
 				FD4ABC611CA2AD62003BD910 /* Info.plist */,
 				FD4ABC561CA2AD62003BD910 /* ViewController.h */,
@@ -351,7 +348,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				FD4ABC601CA2AD62003BD910 /* LaunchScreen.storyboard in Resources */,
-				FD4ABC9C1CA38F8A003BD910 /* thaiPhuketKaronBeach.MOV in Resources */,
 				FD4ABC8D1CA2B7BF003BD910 /* ExampleViewController.xib in Resources */,
 				FD4ABC5D1CA2AD62003BD910 /* Assets.xcassets in Resources */,
 				FD4ABC5B1CA2AD62003BD910 /* Main.storyboard in Resources */,
