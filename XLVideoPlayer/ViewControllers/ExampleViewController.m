@@ -18,10 +18,9 @@
 
 #define videoListUrl @"http://c.3g.163.com/nc/video/list/VAP4BFR16/y/0-10.html"
 
-static BOOL isExist;
-
 @interface ExampleViewController () <UITableViewDataSource, UITableViewDelegate> {
     NSIndexPath *_indexPath;
+    XLVideoPlayer *_player;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *exampleTableView;
@@ -40,7 +39,7 @@ static BOOL isExist;
     if (self = [super init]) {
         self = [[NSBundle mainBundle] loadNibNamed:@"ExampleViewController" owner:nil options:nil].lastObject;
         self.automaticallyAdjustsScrollViewInsets = NO;
-        self.title = @"视频";
+        self.title = @"视频列表";
     }
     return self;
 }
@@ -55,7 +54,6 @@ static BOOL isExist;
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
         _activityIndicatorView = [[UIActivityIndicatorView alloc] init];
-        
     }
     return _activityIndicatorView;
 }
@@ -73,6 +71,11 @@ static BOOL isExist;
     [self fetchVideoListData];
 }
 
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [_player removeFromSuperview];
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -84,7 +87,7 @@ static BOOL isExist;
     
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager GET:videoListUrl parameters:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nonnull responseObject) {
-        NSLog(@"%@", responseObject);
+//        NSLog(@"%@", responseObject);
         NSArray *dataArray = responseObject[@"VAP4BFR16"];
         for (NSDictionary *dict in dataArray) {
             [self.videoArray addObject:[XLVideoItem mj_objectWithKeyValues:dict]];
@@ -97,10 +100,14 @@ static BOOL isExist;
     }];
 }
 
-- (void)showView {
-    NSLog(@"showView");
-    XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:videoUrl];
-//    XLVideoItem *item = self.videoArray[indexPath.row]
+- (void)showView:(UITapGestureRecognizer *)tapGesture {
+    UIView *view = tapGesture.view;
+    XLVideoItem *item = self.videoArray[view.tag - 100];
+    _player = [[XLVideoPlayer alloc] initWithVideoUrl:item.mp4_url];
+    _player.frame = view.bounds;
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
+    XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];
+    [cell.contentView addSubview:_player];
 }
 
 
@@ -114,9 +121,9 @@ static BOOL isExist;
     XLVideoCell *cell = [XLVideoCell videoCellWithTableView:tableView];
     XLVideoItem *item = self.videoArray[indexPath.row];
     cell.videoItem = item;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showView)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showView:)];
     [cell.videoImageView addGestureRecognizer:tap];
-    cell.videoImageView.tag = indexPath.row;
+    cell.videoImageView.tag = indexPath.row + 100;
     return cell;
 }
 
@@ -124,14 +131,6 @@ static BOOL isExist;
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-//    
-//    XLVideoCell *cell = (XLVideoCell *)[tableView cellForRowAtIndexPath:indexPath];
-//    if (!isExist) {
-//        XLVideoPlayer *player = [[XLVideoPlayer alloc] initWithVideoUrl:videoUrl];
-//        player.frame = cell.videoImageView.bounds;
-//        [cell.contentView addSubview:player];
-//    }
-//    isExist = YES;
     XLVideoItem *item = self.videoArray[indexPath.row];
     VideoDetailViewController *videoDetailViewController = [[VideoDetailViewController alloc] init];
     videoDetailViewController.videoTitle = item.title;

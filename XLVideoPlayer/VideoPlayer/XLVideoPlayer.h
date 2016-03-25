@@ -15,10 +15,8 @@ typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 
 @property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
 
+//@property (nonatomic, strong) NSString *videoUrl;
+
 - (instancetype)initWithVideoUrl:(NSString *)videoUrl;
-
-- (void)play;
-
-- (void)pause;
 
 @end

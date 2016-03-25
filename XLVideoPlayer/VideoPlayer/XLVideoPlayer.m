@@ -12,7 +12,7 @@
 
 #define kPlayerBackgroundColor [UIColor blackColor].CGColor
 #define kBarAnimateSpeed 0.5f
-#define kBarShowDuration 4.0f
+#define kBarShowDuration 3.0f
 #define kOpacity 0.7f
 #define kTopBarHeight 40.0f
 #define kBottomBaHeight 40.0f
@@ -75,19 +75,21 @@
         [self addSubview:self.playOrPauseBtn];
         [self addSubview:self.activityIndicatorView];
         [self.activityIndicatorView startAnimating];
+        //play from start
+        [self playOrPause:self.playOrPauseBtn];
         
         _barHiden = YES;
     }
     return self;
 }
 
-- (void)play {
-    [self.player play];
-}
-
-- (void)pause {
-    [self.player pause];
-}
+//- (void)play {
+//    [self.player play];
+//}
+//
+//- (void)pause {
+//    [self.player pause];
+//}
 
 #pragma mark - layoutSubviews
 
@@ -229,6 +231,8 @@
         [_bottomBar addConstraints:@[label2Right, label2Top, label2Bottom, label2Width]];
         
         XLSlider *slider = [[XLSlider alloc] init];
+        slider.value = 0.0f;
+        slider.middleValue = 0.0f;
         slider.translatesAutoresizingMaskIntoConstraints = NO;
         [_bottomBar addSubview:slider];
         self.slider = slider;
@@ -346,7 +350,6 @@
     
     [UIView animateWithDuration:0.5 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
-//        self.frame = CGRectMake(0, 0, 414, 250);
         self.frame = self.playerOriginalFrame;
         self.topBar.frame = CGRectMake(0, 0, self.playerOriginalFrame.size.width, kTopBarHeight);
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
@@ -362,9 +365,9 @@
 - (void)playOrPause:(UIButton *)btn {
     if(self.player.rate == 0){      //pause
         btn.selected = YES;
-        [self play];
+        [self.player play];
     }else if(self.player.rate == 1){    //playing
-        [self pause];
+        [self.player pause];
         btn.selected = NO;
     }
 }
@@ -431,7 +434,7 @@
 - (void)dragSlider {
     NSLog(@"dragSlider");
     _inOperation = YES;
-    [self pause];
+    [self.player pause];;
 }
 
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
@@ -511,7 +514,6 @@
             [self addSubview:self.activityIndicatorView];
             [self.activityIndicatorView startAnimating];
         }else if(self.slider.middleValue >= self.slider.value) {
-            [self play];
             [self.activityIndicatorView removeFromSuperview];
         }
     }
@@ -532,6 +534,7 @@
     [self.playerItem removeObserver:self forKeyPath:@"status"];
     [self.playerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    NSLog(@"video player - dealloc");
 }
 
 @end

@@ -22,8 +22,6 @@
     if (!cell) {
         cell = [[NSBundle mainBundle] loadNibNamed:@"XLVideoCell" owner:nil options:nil].lastObject;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
-        
-        
     }
     
     return cell;

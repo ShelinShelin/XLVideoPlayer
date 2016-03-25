@@ -44,7 +44,7 @@
                             </mask>
                         </variation>
                     </imageView>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="video_play_btn_bg" translatesAutoresizingMaskIntoConstraints="NO" id="NGA-4N-Upu">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="play" translatesAutoresizingMaskIntoConstraints="NO" id="NGA-4N-Upu">
                         <rect key="frame" x="177" y="95" width="60" height="60"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="60" id="8UD-to-Z7U"/>
@@ -52,15 +52,24 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频详情" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="od5-E7-0oU">
-                        <rect key="frame" x="340" y="265" width="64" height="19.5"/>
+                        <rect key="frame" x="317" y="265" width="64" height="19.5"/>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
                     </label>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="right_arrow" translatesAutoresizingMaskIntoConstraints="NO" id="LGZ-lm-vjw">
+                        <rect key="frame" x="386" y="265" width="18" height="18"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="18" id="fbr-lv-57R"/>
+                            <constraint firstAttribute="width" constant="18" id="wHx-eu-nVM"/>
+                        </constraints>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="97G-B2-Jun"/>
+                    <constraint firstAttribute="trailing" secondItem="LGZ-lm-vjw" secondAttribute="trailing" constant="10" id="BCE-Lv-6RZ"/>
                     <constraint firstItem="NGA-4N-Upu" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="OxT-wp-ygF"/>
+                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="leading" secondItem="od5-E7-0oU" secondAttribute="trailing" constant="5" id="P3Q-0k-VNx"/>
                     <constraint firstItem="NGA-4N-Upu" firstAttribute="centerY" secondItem="FQ2-HL-ESY" secondAttribute="centerY" id="Z9S-Pc-ftl"/>
                     <constraint firstItem="od5-E7-0oU" firstAttribute="centerY" secondItem="mjI-O5-Eo7" secondAttribute="centerY" id="adX-D5-XN6"/>
                     <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="cVx-Gf-VGi"/>
@@ -68,7 +77,13 @@
                     <constraint firstItem="mjI-O5-Eo7" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="h7J-sh-dpN"/>
                     <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="hNm-ge-1H4"/>
                     <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="rPI-YL-6gb"/>
+                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="centerY" secondItem="od5-E7-0oU" secondAttribute="centerY" id="yDW-px-iiT"/>
                 </constraints>
+                <variation key="default">
+                    <mask key="constraints">
+                        <exclude reference="egE-5W-LBZ"/>
+                    </mask>
+                </variation>
             </tableViewCellContentView>
             <connections>
                 <outlet property="videoImageView" destination="FQ2-HL-ESY" id="gim-so-eri"/>
@@ -77,6 +92,7 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="video_play_btn_bg" width="64" height="64"/>
+        <image name="play" width="60" height="60"/>
+        <image name="right_arrow" width="18" height="18"/>
     </resources>
 </document>
