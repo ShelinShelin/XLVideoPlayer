@@ -30,7 +30,7 @@
     [super viewWillAppear:animated];
     
     _player = [[XLVideoPlayer alloc] init];
-//    _player.videoUrl = self.mp4_url;
+    _player.videoUrl = self.mp4_url;
     _player.frame = CGRectMake(0, 64, self.view.frame.size.width, 250);
     [self.view addSubview:_player];
 }
