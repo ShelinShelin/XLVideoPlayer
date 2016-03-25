@@ -5,8 +5,6 @@ A Custom Video Player
 
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_1.gif)
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_2.gif)
-![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_4.gif)
-![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_3.gif)
 - XLVideoPlayer.h接口定义
 ```
 @interface XLVideoPlayer : UIView
