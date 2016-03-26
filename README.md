@@ -27,7 +27,7 @@ A Custom Video Player
 ```
 - 使用
 
-将VideoPlayer文件夹内四个文件拖入工程内
+将VideoPlayer文件夹内四个文件，及对应图片拖入工程内
 ```
 @interface VideoDetailViewController () {
     XLVideoPlayer *_player;
