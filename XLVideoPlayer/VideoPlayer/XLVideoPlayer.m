@@ -74,13 +74,22 @@
     _videoUrl = videoUrl;
     
     [self.layer addSublayer:self.playerLayer];
-    //play from start
     [self addSubview:self.activityIndicatorView];
     [self.activityIndicatorView startAnimating];
+    //play from start
     [self playOrPause:self.playOrPauseBtn];
     [self addSubview:self.bottomBar];
     [self addSubview:self.playOrPauseBtn];
     
+}
+
+- (void)playPause {
+    [self playOrPause:self.playOrPauseBtn];
+}
+
+- (void)destroyPlayer {
+    [self playPause];
+    [self removeFromSuperview];
 }
 
 #pragma mark - layoutSubviews

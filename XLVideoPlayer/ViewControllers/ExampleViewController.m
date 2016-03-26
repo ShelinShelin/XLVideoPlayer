@@ -29,8 +29,6 @@
 
 @property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
 
-
-
 @end
 
 @implementation ExampleViewController
@@ -42,6 +40,16 @@
         self.title = @"视频列表";
     }
     return self;
+}
+
+#pragma mark - lazt loading
+
+- (XLVideoPlayer *)player {
+    if (!_player) {
+        _player = [[XLVideoPlayer alloc] init];
+        _player.frame = CGRectMake(0, 64, self.view.frame.size.width, 250);
+    }
+    return _player;
 }
 
 - (NSMutableArray *)videoArray {
@@ -57,6 +65,8 @@
     }
     return _activityIndicatorView;
 }
+
+#pragma mark - life cyle
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -74,17 +84,14 @@
 
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    [self destroyVideoPlayer];
+    
+    [_player destroyPlayer];
+    _player = nil;
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)destroyVideoPlayer {
-    [_player removeFromSuperview];
-    _player = nil;
 }
 
 #pragma mark - network
@@ -107,8 +114,9 @@
 }
 
 - (void)showView:(UITapGestureRecognizer *)tapGesture {
-    [self destroyVideoPlayer];
-
+    [_player destroyPlayer];
+    _player = nil;
+    
     UIView *view = tapGesture.view;
     XLVideoItem *item = self.videoArray[view.tag - 100];
     _player = [[XLVideoPlayer alloc] init];
@@ -119,8 +127,8 @@
     [cell.contentView addSubview:_player];
     _currentPlayCellRect = [self.exampleTableView rectForRowAtIndexPath:indexPath];
     _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
-        [player removeFromSuperview];
-        player = nil;
+        [player destroyPlayer];
+        _player = nil;
     };
 }
 
@@ -160,14 +168,16 @@
         CGFloat cellBottom = _currentPlayCellRect.origin.y + _currentPlayCellRect.size.height;
         if (scrollView.contentOffset.y > cellBottom) {
             if (_player) {
-                [self destroyVideoPlayer];
+                [_player destroyPlayer];
+                _player = nil;
             }
             return;
         }
         CGFloat cellUp = _currentPlayCellRect.origin.y;
         if (cellUp > scrollView.contentOffset.y + scrollView.frame.size.height) {
             if (_player) {
-                [self destroyVideoPlayer];
+                [_player destroyPlayer];
+                _player = nil;
             }
             return;
         }
