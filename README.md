@@ -17,10 +17,10 @@ A Custom Video Player
 /** video url */
 @property (nonatomic, strong) NSString *videoUrl;
 
-/**play or pause */
+/**play or pause  根据播放器当前播放状态执行播放或者暂停操作 */
 - (void)playPause;
 
-/** dealloc */
+/** dealloc 暂停移除播放器，最后记得将player = nil */
 - (void)destroyPlayer;
 
 @end
