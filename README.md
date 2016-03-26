@@ -13,8 +13,16 @@ A Custom Video Player
 ```
 @interface XLVideoPlayer : UIView
 @property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
-/**video url*/
+
+/** video url */
 @property (nonatomic, strong) NSString *videoUrl;
+
+/**play or pause */
+- (void)playPause;
+
+/** dealloc */
+- (void)destroyPlayer;
+
 @end
 ```
 - 使用
