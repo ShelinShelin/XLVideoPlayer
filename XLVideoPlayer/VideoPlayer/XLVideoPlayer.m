@@ -466,11 +466,6 @@
 
 /**
  *  通过KVO监控播放器状态
- *
- *  @param keyPath 监控属性
- *  @param object  监视器
- *  @param change  状态改变
- *  @param context 上下文
  */
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context{
     AVPlayerItem *playerItem = object;
