@@ -5,8 +5,8 @@ A Custom Video Player
 
 视频列表页和详情页
 
-![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_1.gif)
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_2.gif)
+![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_4.gif)
 - XLVideoPlayer.h接口定义
 
 每次视频播放完毕默认回到起始位置，点击后可循环播放，播放完毕也可把你想做的事放在回调的block中
