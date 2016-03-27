@@ -25,7 +25,7 @@ A Custom Video Player
 
 @end
 ```
-- 使用
+- 使用 
 
 将VideoPlayer文件夹内四个文件，及对应图片拖入工程内
 ```
