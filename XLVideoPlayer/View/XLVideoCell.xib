@@ -15,44 +15,23 @@
                 <rect key="frame" x="0.0" y="0.0" width="414" height="299.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频-----1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjI-O5-Eo7">
-                        <rect key="frame" x="15" y="265" width="75.5" height="19.5"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="19.5" id="HFk-Pq-nHD"/>
-                            <constraint firstAttribute="width" constant="300" id="YAt-nd-9aa"/>
-                        </constraints>
-                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="YAt-nd-9aa"/>
-                            </mask>
-                        </variation>
-                    </label>
                     <imageView contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FQ2-HL-ESY">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="250"/>
                         <color key="backgroundColor" red="0.87843137250000003" green="0.88235294119999996" blue="0.86274509799999999" alpha="1" colorSpace="calibratedRGB"/>
                         <gestureRecognizers/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="250" id="f0N-5X-Q1G"/>
-                            <constraint firstAttribute="width" secondItem="FQ2-HL-ESY" secondAttribute="height" multiplier="207:125" id="q6Z-aL-Cl1"/>
+                            <constraint firstAttribute="width" secondItem="FQ2-HL-ESY" secondAttribute="height" multiplier="207:125" id="034-66-Kql"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="f0N-5X-Q1G"/>
-                            </mask>
-                        </variation>
                     </imageView>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="play" translatesAutoresizingMaskIntoConstraints="NO" id="NGA-4N-Upu">
                         <rect key="frame" x="177" y="95" width="60" height="60"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="60" id="8UD-to-Z7U"/>
-                            <constraint firstAttribute="height" constant="60" id="nQ6-iN-0ef"/>
-                        </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="视频详情" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="od5-E7-0oU">
                         <rect key="frame" x="317" y="265" width="64" height="19.5"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="64" id="I8x-1F-Uh3"/>
+                            <constraint firstAttribute="height" constant="19.5" id="ykT-EN-vOi"/>
+                        </constraints>
                         <fontDescription key="fontDescription" type="system" pointSize="16"/>
                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                         <nil key="highlightedColor"/>
@@ -60,30 +39,32 @@
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="right_arrow" translatesAutoresizingMaskIntoConstraints="NO" id="LGZ-lm-vjw">
                         <rect key="frame" x="386" y="265" width="18" height="18"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="18" id="fbr-lv-57R"/>
-                            <constraint firstAttribute="width" constant="18" id="wHx-eu-nVM"/>
+                            <constraint firstAttribute="width" constant="18" id="3dU-un-XeD"/>
+                            <constraint firstAttribute="height" constant="18" id="7sQ-vV-QX2"/>
                         </constraints>
                     </imageView>
+                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="视频-----1" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mjI-O5-Eo7">
+                        <rect key="frame" x="233" y="264" width="76" height="20"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                        <nil key="highlightedColor"/>
+                    </label>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="97G-B2-Jun"/>
-                    <constraint firstAttribute="trailing" secondItem="LGZ-lm-vjw" secondAttribute="trailing" constant="10" id="BCE-Lv-6RZ"/>
-                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="OxT-wp-ygF"/>
-                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="leading" secondItem="od5-E7-0oU" secondAttribute="trailing" constant="5" id="P3Q-0k-VNx"/>
-                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerY" secondItem="FQ2-HL-ESY" secondAttribute="centerY" id="Z9S-Pc-ftl"/>
-                    <constraint firstItem="od5-E7-0oU" firstAttribute="centerY" secondItem="mjI-O5-Eo7" secondAttribute="centerY" id="adX-D5-XN6"/>
-                    <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="cVx-Gf-VGi"/>
-                    <constraint firstAttribute="trailing" secondItem="od5-E7-0oU" secondAttribute="trailing" constant="10" id="egE-5W-LBZ"/>
-                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="h7J-sh-dpN"/>
-                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="hNm-ge-1H4"/>
-                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="rPI-YL-6gb"/>
-                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="centerY" secondItem="od5-E7-0oU" secondAttribute="centerY" id="yDW-px-iiT"/>
+                    <constraint firstAttribute="bottom" secondItem="mjI-O5-Eo7" secondAttribute="bottom" constant="15" id="Ia8-Vs-DHy"/>
+                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="top" secondItem="FQ2-HL-ESY" secondAttribute="bottom" constant="15" id="IvT-rX-gU2"/>
+                    <constraint firstAttribute="trailing" secondItem="LGZ-lm-vjw" secondAttribute="trailing" constant="10" id="NA2-RT-Idm"/>
+                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="leading" secondItem="od5-E7-0oU" secondAttribute="trailing" constant="5" id="R1n-0A-dyx"/>
+                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerX" secondItem="FQ2-HL-ESY" secondAttribute="centerX" id="hhA-Ap-FcM"/>
+                    <constraint firstItem="mjI-O5-Eo7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="15" id="hoA-5K-H5C"/>
+                    <constraint firstItem="od5-E7-0oU" firstAttribute="top" secondItem="mjI-O5-Eo7" secondAttribute="top" id="lpe-DL-tLe"/>
+                    <constraint firstItem="LGZ-lm-vjw" firstAttribute="top" secondItem="od5-E7-0oU" secondAttribute="top" id="m7r-5X-5Ah"/>
+                    <constraint firstItem="NGA-4N-Upu" firstAttribute="centerY" secondItem="FQ2-HL-ESY" secondAttribute="centerY" id="qOR-1B-HR1"/>
+                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="uSb-5E-BQ7"/>
+                    <constraint firstAttribute="trailing" secondItem="FQ2-HL-ESY" secondAttribute="trailing" id="wk3-b1-ZkA"/>
+                    <constraint firstItem="od5-E7-0oU" firstAttribute="leading" secondItem="mjI-O5-Eo7" secondAttribute="trailing" constant="10" id="xMT-I6-72l"/>
+                    <constraint firstItem="FQ2-HL-ESY" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="xVa-iM-vhk"/>
                 </constraints>
-                <variation key="default">
-                    <mask key="constraints">
-                        <exclude reference="egE-5W-LBZ"/>
-                    </mask>
-                </variation>
             </tableViewCellContentView>
             <connections>
                 <outlet property="videoImageView" destination="FQ2-HL-ESY" id="gim-so-eri"/>

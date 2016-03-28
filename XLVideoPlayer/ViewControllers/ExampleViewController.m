@@ -72,7 +72,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    self.exampleTableView.rowHeight = 300;
+    self.exampleTableView.estimatedRowHeight = 100;
 
     UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
     self.activityIndicatorView.center = keyWindow.center;
