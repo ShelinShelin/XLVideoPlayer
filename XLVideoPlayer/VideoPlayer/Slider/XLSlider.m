@@ -256,7 +256,7 @@ static CGFloat panDistance;
 - (void)dealloc {
     [self removeObserver:self forKeyPath:@"value"];
     [self removeObserver:self forKeyPath:@"middleValue"];
-//    NSLog(@"slider -- dealloc");
+    NSLog(@"slider -- dealloc");
 }
 
 @end

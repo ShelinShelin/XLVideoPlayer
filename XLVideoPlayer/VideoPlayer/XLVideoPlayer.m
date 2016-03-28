@@ -274,7 +274,7 @@
 
 - (void)actionFullScreen {
     if (!_isFullScreen) {
-        [self orientationRightFullScreen];
+        [self orientationLeftFullScreen];
     }else {
         [self smallScreen];
     }
@@ -346,10 +346,6 @@
         [self.player pause];
         btn.selected = NO;
     }
-}
-
-- (void)actionBack {
-    [self removeFromSuperview];
 }
 
 - (void)showOrHidenBar {
