@@ -288,7 +288,7 @@
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationLandscapeLeft] forKey:@"orientation"];
     [self updateConstraintsIfNeeded];
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(M_PI / 2);
         self.frame = self.keyWindow.bounds;
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
@@ -308,7 +308,7 @@
     
     [self updateConstraintsIfNeeded];
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
         self.frame = self.keyWindow.bounds;
         self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
@@ -325,7 +325,7 @@
     
     [self.playSuprView addSubview:self];
     
-    [UIView animateWithDuration:0.5 animations:^{
+    [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
         self.frame = self.playerOriginalFrame;
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
