@@ -563,6 +563,7 @@
         CGRect smallFrame = CGRectMake(tableViewframe.origin.x + tableViewframe.size.width - w, tableViewframe.origin.y + tableViewframe.size.height - h, w, h);
         self.frame = smallFrame;
         self.playerLayer.frame = self.bounds;
+        self.activityIndicatorView.center = CGPointMake(w / 2.0, h / 2.0);
     }];
 }
 
@@ -574,7 +575,7 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.frame = CGRectMake(self.currentPlayCellRect.origin.x, self.currentPlayCellRect.origin.y, self.playerOriginalFrame.size.width, self.playerOriginalFrame.size.height);
         self.playerLayer.frame = self.bounds;
-
+        self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
     } completion:^(BOOL finished) {
         self.frame = self.playerOriginalFrame;
         [self.playSuprView addSubview:self];
