@@ -165,7 +165,7 @@
         label1.translatesAutoresizingMaskIntoConstraints = NO;
         label1.textAlignment = NSTextAlignmentCenter;
         label1.text = @"00:00:00";
-        label1.font = [UIFont systemFontOfSize:14.0f];
+        label1.font = [UIFont systemFontOfSize:12.0f];
         label1.textColor = [UIColor whiteColor];
         [_bottomBar addSubview:label1];
         self.progressLabel = label1;
@@ -173,15 +173,15 @@
         NSLayoutConstraint *label1Left = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint *label1Top = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
         NSLayoutConstraint *label1Bottom = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-        NSLayoutConstraint *label1Width = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:70.0f];
+        NSLayoutConstraint *label1Width = [NSLayoutConstraint constraintWithItem:label1 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:60.0f];
         [_bottomBar addConstraints:@[label1Left, label1Top, label1Bottom, label1Width]];
         
         
         UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         fullScreenBtn.translatesAutoresizingMaskIntoConstraints = NO;
         fullScreenBtn.contentMode = UIViewContentModeCenter;
-        [fullScreenBtn setImage:[UIImage imageNamed:@"big"] forState:UIControlStateNormal];
-        [fullScreenBtn setImage:[UIImage imageNamed:@"small"] forState:UIControlStateSelected];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"btn_zoom_out"] forState:UIControlStateNormal];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"btn_zoom_in"] forState:UIControlStateSelected];
         [fullScreenBtn addTarget:self action:@selector(actionFullScreen) forControlEvents:UIControlEventTouchDown];
         [_bottomBar addSubview:fullScreenBtn];
         self.zoomScreenBtn = fullScreenBtn;
@@ -197,7 +197,7 @@
         label2.translatesAutoresizingMaskIntoConstraints = NO;
         label2.textAlignment = NSTextAlignmentCenter;
         label2.text = @"00:00:00";
-        label2.font = [UIFont systemFontOfSize:14.0f];
+        label2.font = [UIFont systemFontOfSize:12.0f];
         label2.textColor = [UIColor whiteColor];
         [_bottomBar addSubview:label2];
         self.totalDurationLabel = label2;
@@ -205,7 +205,7 @@
         NSLayoutConstraint *label2Right = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:fullScreenBtn attribute:NSLayoutAttributeLeft multiplier:1.0f constant:0];
         NSLayoutConstraint *label2Top = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeTop multiplier:1.0f constant:0];
         NSLayoutConstraint *label2Bottom = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeBottom relatedBy:NSLayoutRelationEqual toItem:_bottomBar attribute:NSLayoutAttributeBottom multiplier:1.0f constant:0];
-        NSLayoutConstraint *label2Width = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:70.0f];
+        NSLayoutConstraint *label2Width = [NSLayoutConstraint constraintWithItem:label2 attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0f constant:60.0f];
         [_bottomBar addConstraints:@[label2Right, label2Top, label2Bottom, label2Width]];
         
         XLSlider *slider = [[XLSlider alloc] init];
