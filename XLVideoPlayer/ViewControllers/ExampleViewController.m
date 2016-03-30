@@ -151,6 +151,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:self.exampleTableView]) {
+        
         [_player playerWithBindTableView:self.exampleTableView currentPlayCellRect:_currentPlayCellRect supportSmallWindowPlay:YES];
     }
 }

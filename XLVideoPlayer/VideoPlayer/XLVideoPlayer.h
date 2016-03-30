@@ -16,14 +16,28 @@ typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 
 @property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
 
-/** video url */
+/**
+ *  video url
+ */
 @property (nonatomic, strong) NSString *videoUrl;
 
-/**play or pause */
+/**
+ *  play or pause
+ */
 - (void)playPause;
-/** dealloc */
+
+/**
+ *  dealloc
+ */
 - (void)destroyPlayer;
 
+/**
+ *  在scrollview的scrollViewDidScroll代理中调用
+ *
+ *  @param bindTableView       当前绑定的tableview
+ *  @param currentPlayCellRect 当前播放的cell相对tableview的frame
+ *  @param isSupport           是否支持右下角小窗悬停播放
+ */
 - (void)playerWithBindTableView:(UITableView *)bindTableView currentPlayCellRect:(CGRect)currentPlayCellRect supportSmallWindowPlay:(BOOL)isSupport;
 
 @end

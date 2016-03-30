@@ -18,7 +18,7 @@
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
 
-@interface XLVideoPlayer () <UITableViewDelegate, UIScrollViewDelegate> {
+@interface XLVideoPlayer () {
     BOOL _isOriginalFrame;
     BOOL _isFullScreen;
     BOOL _barHiden;
@@ -45,10 +45,7 @@
 @property (nonatomic, assign) CGFloat totalDuration;
 
 @property (nonatomic, strong) UITableView *bindTableView;
-
 @property (nonatomic, assign) CGRect currentPlayCellRect;
-
-//@property (nonatomic, assign) BOOL supportSmallWindowPlay;
 
 @end
 
