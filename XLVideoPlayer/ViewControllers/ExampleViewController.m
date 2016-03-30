@@ -27,8 +27,6 @@
 
 @property (nonatomic, strong) NSMutableArray *videoArray;
 
-@property (nonatomic, strong) UIActivityIndicatorView *activityIndicatorView;
-
 @end
 
 @implementation ExampleViewController
@@ -59,13 +57,6 @@
     return _videoArray;
 }
 
-- (UIActivityIndicatorView *)activityIndicatorView {
-    if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    }
-    return _activityIndicatorView;
-}
-
 #pragma mark - life cyle
 
 - (void)viewDidLoad {
@@ -73,11 +64,6 @@
     // Do any additional setup after loading the view from its nib.
     
     self.exampleTableView.estimatedRowHeight = 100;
-
-    UIWindow *keyWindow = [UIApplication sharedApplication].keyWindow;
-    self.activityIndicatorView.center = keyWindow.center;
-    [keyWindow addSubview:self.activityIndicatorView];
-    [self.activityIndicatorView startAnimating];
 
     [self fetchVideoListData];
 }
@@ -106,8 +92,6 @@
             [self.videoArray addObject:[XLVideoItem mj_objectWithKeyValues:dict]];
         }
         [self.exampleTableView reloadData];
-        [self.activityIndicatorView stopAnimating];
-        [self.activityIndicatorView removeFromSuperview];
     } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
         NSLog(@"%@", error);
     }];
@@ -128,8 +112,6 @@
     XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];
     [cell.contentView addSubview:_player];
     _currentPlayCellRect = [self.exampleTableView rectForRowAtIndexPath:indexPath];
-    
-    
     
     _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
         [player destroyPlayer];

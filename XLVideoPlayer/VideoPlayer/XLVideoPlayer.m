@@ -94,7 +94,7 @@
 }
 
 - (void)destroyPlayer {
-    [self playPause];
+    [self.player pause];
     [self removeFromSuperview];
 }
 
@@ -102,28 +102,36 @@
 
     self.bindTableView = bindTableView;
     self.currentPlayCellRect = currentPlayCellRect;
-//    self.supportSmallWindowPlay = isSupport;
-    
     
     CGFloat cellBottom = currentPlayCellRect.origin.y + currentPlayCellRect.size.height;
     CGFloat cellUp = currentPlayCellRect.origin.y;
     
     if (bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
+        if (!isSupport) {
+            [self destroyPlayer];
+            return;
+        }
         [self smallWindowPlay];
         return;
     }
     
     if (cellUp > bindTableView.contentOffset.y + bindTableView.frame.size.height) { //向下滑动，离开屏幕
+        if (!isSupport) {
+            [self destroyPlayer];
+            return;
+        }
         [self smallWindowPlay];
         return;
     }
     
     if (bindTableView.contentOffset.y < cellBottom){ //向下滑动，回到屏幕
+        if (!isSupport) return;
         [self returnToOriginView];
         return;
     }
     
     if (cellUp < bindTableView.contentOffset.y + bindTableView.frame.size.height){ //向上滑动，回到屏幕
+        if (!isSupport) return;
         [self returnToOriginView];
         return;
     }
@@ -545,28 +553,34 @@
 
 - (void)smallWindowPlay {
     if ([self.superview isKindOfClass:[UIWindow class]]) return;
-    
+    self.playOrPauseBtn.hidden = YES;
+    self.bottomBar.hidden = YES;
     CGRect tableViewframe = [self.bindTableView convertRect:self.bindTableView.bounds toView:self.keyWindow];
     self.frame = [self convertRect:self.frame toView:self.keyWindow];
     [self.keyWindow addSubview:self];
     
-    [UIView animateWithDuration:0.4 animations:^{
+    [UIView animateWithDuration:0.3 animations:^{
         
         CGFloat w = self.playerOriginalFrame.size.width * 0.5;
         CGFloat h = self.playerOriginalFrame.size.height * 0.5;
         CGRect smallFrame = CGRectMake(tableViewframe.origin.x + tableViewframe.size.width - w, tableViewframe.origin.y + tableViewframe.size.height - h, w, h);
         self.frame = smallFrame;
+        self.playerLayer.frame = self.bounds;
     }];
 }
 
 - (void)returnToOriginView {
     if (![self.superview isKindOfClass:[UIWindow class]]) return;
-       [UIView animateWithDuration:0.4 animations:^{
+    self.playOrPauseBtn.hidden = NO;
+    self.bottomBar.hidden = NO;
+
+    [UIView animateWithDuration:0.3 animations:^{
         self.frame = CGRectMake(self.currentPlayCellRect.origin.x, self.currentPlayCellRect.origin.y, self.playerOriginalFrame.size.width, self.playerOriginalFrame.size.height);
+        self.playerLayer.frame = self.bounds;
+
     } completion:^(BOOL finished) {
         self.frame = self.playerOriginalFrame;
         [self.playSuprView addSubview:self];
-
     }];
 }
 
