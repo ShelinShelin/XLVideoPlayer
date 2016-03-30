@@ -119,13 +119,18 @@
     
     UIView *view = tapGesture.view;
     XLVideoItem *item = self.videoArray[view.tag - 100];
+    
     _player = [[XLVideoPlayer alloc] init];
     _player.videoUrl = item.mp4_url;
     _player.frame = view.bounds;
+    
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
     XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];
     [cell.contentView addSubview:_player];
     _currentPlayCellRect = [self.exampleTableView rectForRowAtIndexPath:indexPath];
+    
+    
+    
     _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
         [player destroyPlayer];
         _player = nil;
@@ -164,23 +169,7 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:self.exampleTableView]) {
-        
-        CGFloat cellBottom = _currentPlayCellRect.origin.y + _currentPlayCellRect.size.height;
-        if (scrollView.contentOffset.y > cellBottom) {
-            if (_player) {
-                [_player destroyPlayer];
-                _player = nil;
-            }
-            return;
-        }
-        CGFloat cellUp = _currentPlayCellRect.origin.y;
-        if (cellUp > scrollView.contentOffset.y + scrollView.frame.size.height) {
-            if (_player) {
-                [_player destroyPlayer];
-                _player = nil;
-            }
-            return;
-        }
+        [_player playerWithBindTableView:self.exampleTableView currentPlayCellRect:_currentPlayCellRect supportSmallWindowPlay:YES];
     }
 }
 

@@ -18,7 +18,7 @@
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
 
-@interface XLVideoPlayer () {
+@interface XLVideoPlayer () <UITableViewDelegate, UIScrollViewDelegate> {
     BOOL _isOriginalFrame;
     BOOL _isFullScreen;
     BOOL _barHiden;
@@ -43,6 +43,12 @@
 @property (nonatomic,strong) AVPlayer *player;
 /**video total duration*/
 @property (nonatomic, assign) CGFloat totalDuration;
+
+@property (nonatomic, strong) UITableView *bindTableView;
+
+@property (nonatomic, assign) CGRect currentPlayCellRect;
+
+//@property (nonatomic, assign) BOOL supportSmallWindowPlay;
 
 @end
 
@@ -92,6 +98,37 @@
     [self removeFromSuperview];
 }
 
+- (void)playerWithBindTableView:(UITableView *)bindTableView currentPlayCellRect:(CGRect)currentPlayCellRect supportSmallWindowPlay:(BOOL)isSupport {
+
+    self.bindTableView = bindTableView;
+    self.currentPlayCellRect = currentPlayCellRect;
+//    self.supportSmallWindowPlay = isSupport;
+    
+    
+    CGFloat cellBottom = currentPlayCellRect.origin.y + currentPlayCellRect.size.height;
+    CGFloat cellUp = currentPlayCellRect.origin.y;
+    
+    if (bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
+        [self smallWindowPlay];
+        return;
+    }
+    
+    if (cellUp > bindTableView.contentOffset.y + bindTableView.frame.size.height) { //向下滑动，离开屏幕
+        [self smallWindowPlay];
+        return;
+    }
+    
+    if (bindTableView.contentOffset.y < cellBottom){ //向下滑动，回到屏幕
+        [self returnToOriginView];
+        return;
+    }
+    
+    if (cellUp < bindTableView.contentOffset.y + bindTableView.frame.size.height){ //向上滑动，回到屏幕
+        [self returnToOriginView];
+        return;
+    }
+}
+
 #pragma mark - layoutSubviews
 
 - (void)layoutSubviews {
@@ -105,8 +142,8 @@
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
+        _isOriginalFrame = YES;
     }
-    _isOriginalFrame = YES;
 }
 
 #pragma mark - lazy loading
@@ -502,6 +539,35 @@
     int minutes = (totalSeconds / 60) % 60;
     int hours = totalSeconds / 3600;
     return [NSString stringWithFormat:@"%02d:%02d:%02d", hours, minutes, seconds];
+}
+
+#pragma mark - animation smallWindowPlay
+
+- (void)smallWindowPlay {
+    if ([self.superview isKindOfClass:[UIWindow class]]) return;
+    
+    CGRect tableViewframe = [self.bindTableView convertRect:self.bindTableView.bounds toView:self.keyWindow];
+    self.frame = [self convertRect:self.frame toView:self.keyWindow];
+    [self.keyWindow addSubview:self];
+    
+    [UIView animateWithDuration:0.4 animations:^{
+        
+        CGFloat w = self.playerOriginalFrame.size.width * 0.5;
+        CGFloat h = self.playerOriginalFrame.size.height * 0.5;
+        CGRect smallFrame = CGRectMake(tableViewframe.origin.x + tableViewframe.size.width - w, tableViewframe.origin.y + tableViewframe.size.height - h, w, h);
+        self.frame = smallFrame;
+    }];
+}
+
+- (void)returnToOriginView {
+    if (![self.superview isKindOfClass:[UIWindow class]]) return;
+       [UIView animateWithDuration:0.4 animations:^{
+        self.frame = CGRectMake(self.currentPlayCellRect.origin.x, self.currentPlayCellRect.origin.y, self.playerOriginalFrame.size.width, self.playerOriginalFrame.size.height);
+    } completion:^(BOOL finished) {
+        self.frame = self.playerOriginalFrame;
+        [self.playSuprView addSubview:self];
+
+    }];
 }
 
 #pragma mark - dealloc
