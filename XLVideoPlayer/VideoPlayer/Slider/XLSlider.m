@@ -190,7 +190,7 @@ static CGFloat panDistance;
 
 - (CGFloat)sliderDiameter {
     if (!_sliderDiameter) {
-        return 15.0f;
+        return 10.0f;
     }
     return _sliderDiameter;
 }
@@ -233,7 +233,7 @@ static CGFloat panDistance;
 
 - (CGFloat)lineWidth {
     if (!_lineWidth) {
-        return 2.0f;
+        return 1.0f;
     }
     return _lineWidth;
 }
