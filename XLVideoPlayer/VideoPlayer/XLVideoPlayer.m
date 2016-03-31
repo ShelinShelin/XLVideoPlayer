@@ -374,23 +374,11 @@
     _isFullScreen = NO;
     self.zoomScreenBtn.selected = NO;
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
-    
-    UIView *currentSuperView;
+   
     if (self.bindTableView) {
         UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath:self.currentIndexPath];
-        for (UIView *subView in cell.contentView.subviews) {
-            if ([subView isKindOfClass:[self.playSuprView class]]) {
-                currentSuperView = subView;
-            }
-        }
-        if ([cell.contentView isKindOfClass:[self.playSuprView class]]) {
-            currentSuperView = cell.contentView;
-        }
-    }else {
-        currentSuperView = self.playSuprView;
+        [cell.contentView addSubview:self];
     }
-    
-    [currentSuperView addSubview:self];
     
     [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
@@ -608,17 +596,7 @@
     } completion:^(BOOL finished) {
         self.frame = self.playerOriginalFrame;
         UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath:self.currentIndexPath];
-        UIView *currentSuperView;
-        
-        for (UIView *subView in cell.contentView.subviews) {
-            if ([subView isKindOfClass:[self.playSuprView class]]) {
-                currentSuperView = subView;
-            }
-        }
-        if ([cell.contentView isKindOfClass:[self.playSuprView class]]) {
-            currentSuperView = cell.contentView;
-        }
-        [currentSuperView addSubview:self];
+        [cell.contentView addSubview:self];
     }];
 }
 

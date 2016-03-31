@@ -112,7 +112,7 @@
     [_player playerBindTableView:self.exampleTableView currentIndexPath:_indexPath];
     _player.frame = view.bounds;
 
-    [cell.contentView addSubview:_player];
+    [cell.contentView addSubview:_player];  
     
     _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
         [player destroyPlayer];
