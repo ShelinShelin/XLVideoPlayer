@@ -17,7 +17,7 @@ A Custom Video Player
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_2.gif)
 - XLVideoPlayer.h接口定义
 
-每次视频播放完毕默认回到起始位置，点击后可循环播放，播放完毕也可把你想做的事放在回调的block中
+每次视频播放完毕默认回到起始位置，点击后可循环播放，播放完毕也可把你想做的事放在回调的block中。如果加在普通UIView上播放可以不调用UITableView相关方法。
 ```
 
 /**
