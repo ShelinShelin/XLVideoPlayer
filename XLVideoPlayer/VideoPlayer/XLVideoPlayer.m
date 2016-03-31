@@ -97,18 +97,23 @@
     [self removeFromSuperview];
 }
 
-- (void)playerWithBindTableView:(UITableView *)bindTableView currentIndexPath:(NSIndexPath *)currentIndexPath supportSmallWindowPlay:(BOOL)isSupport {
-
+- (void)playerBindTableView:(UITableView *)bindTableView currentIndexPath:(NSIndexPath *)currentIndexPath {
     self.bindTableView = bindTableView;
-    
-    self.currentPlayCellRect = [bindTableView rectForRowAtIndexPath:currentIndexPath];
     self.currentIndexPath = currentIndexPath;
+}
+
+- (void)playerScrollIsSupportSmallWindowPlay:(BOOL)support {
+    
+    NSAssert(self.bindTableView != nil, @"必须绑定对应的tableview！！！");
+    
+    self.currentPlayCellRect = [self.bindTableView rectForRowAtIndexPath:self.currentIndexPath];
+    self.currentIndexPath = self.currentIndexPath;
     
     CGFloat cellBottom = self.currentPlayCellRect.origin.y + self.currentPlayCellRect.size.height;
     CGFloat cellUp = self.currentPlayCellRect.origin.y;
     
-    if (bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
-        if (!isSupport) {
+    if (self.bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
+        if (!support) {
             [self destroyPlayer];
             return;
         }
@@ -116,8 +121,8 @@
         return;
     }
     
-    if (cellUp > bindTableView.contentOffset.y + bindTableView.frame.size.height) { //向下滑动，离开屏幕
-        if (!isSupport) {
+    if (cellUp > self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height) { //向下滑动，离开屏幕
+        if (!support) {
             [self destroyPlayer];
             return;
         }
@@ -125,14 +130,14 @@
         return;
     }
     
-    if (bindTableView.contentOffset.y < cellBottom){ //向下滑动，回到屏幕
-        if (!isSupport) return;
+    if (self.bindTableView.contentOffset.y < cellBottom){ //向下滑动，回到屏幕
+        if (!support) return;
         [self returnToOriginView];
         return;
     }
     
-    if (cellUp < bindTableView.contentOffset.y + bindTableView.frame.size.height){ //向上滑动，回到屏幕
-        if (!isSupport) return;
+    if (cellUp < self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height){ //向上滑动，回到屏幕
+        if (!support) return;
         [self returnToOriginView];
         return;
     }
@@ -370,7 +375,22 @@
     self.zoomScreenBtn.selected = NO;
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
     
-    [self.playSuprView addSubview:self];
+    UIView *currentSuperView;
+    if (self.bindTableView) {
+        UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath:self.currentIndexPath];
+        for (UIView *subView in cell.contentView.subviews) {
+            if ([subView isKindOfClass:[self.playSuprView class]]) {
+                currentSuperView = subView;
+            }
+        }
+        if ([cell.contentView isKindOfClass:[self.playSuprView class]]) {
+            currentSuperView = cell.contentView;
+        }
+    }else {
+        currentSuperView = self.playSuprView;
+    }
+    
+    [currentSuperView addSubview:self];
     
     [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
