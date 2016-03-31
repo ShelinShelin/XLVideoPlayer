@@ -39,7 +39,7 @@ typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 /**
  *  在scrollview的scrollViewDidScroll代理中调用
  *
- *  @param isSupport        是否支持右下角小窗悬停播放
+ *  @param support        是否支持右下角小窗悬停播放
  */
 - (void)playerScrollIsSupportSmallWindowPlay:(BOOL)support;
 
