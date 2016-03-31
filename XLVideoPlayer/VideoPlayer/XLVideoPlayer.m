@@ -23,6 +23,7 @@
     BOOL _isFullScreen;
     BOOL _barHiden;
     BOOL _inOperation;
+    BOOL _isSmallWindowPlay;
 }
 
 /**videoPlayer superView*/
@@ -46,6 +47,7 @@
 
 @property (nonatomic, strong) UITableView *bindTableView;
 @property (nonatomic, assign) CGRect currentPlayCellRect;
+@property (nonatomic, strong) NSIndexPath *currentIndexPath;
 
 @end
 
@@ -95,13 +97,15 @@
     [self removeFromSuperview];
 }
 
-- (void)playerWithBindTableView:(UITableView *)bindTableView currentPlayCellRect:(CGRect)currentPlayCellRect supportSmallWindowPlay:(BOOL)isSupport {
+- (void)playerWithBindTableView:(UITableView *)bindTableView currentIndexPath:(NSIndexPath *)currentIndexPath supportSmallWindowPlay:(BOOL)isSupport {
 
     self.bindTableView = bindTableView;
-    self.currentPlayCellRect = currentPlayCellRect;
     
-    CGFloat cellBottom = currentPlayCellRect.origin.y + currentPlayCellRect.size.height;
-    CGFloat cellUp = currentPlayCellRect.origin.y;
+    self.currentPlayCellRect = [bindTableView rectForRowAtIndexPath:currentIndexPath];
+    self.currentIndexPath = currentIndexPath;
+    
+    CGFloat cellBottom = self.currentPlayCellRect.origin.y + self.currentPlayCellRect.size.height;
+    CGFloat cellUp = self.currentPlayCellRect.origin.y;
     
     if (bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
         if (!isSupport) {
@@ -301,6 +305,7 @@
 #pragma mark - Screen Orientation
 
 - (void)statusBarOrientationChange:(NSNotification *)notification {
+    if (_isSmallWindowPlay) return;
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (orientation == UIDeviceOrientationLandscapeLeft) {
 //        NSLog(@"UIDeviceOrientationLandscapeLeft");
@@ -550,8 +555,10 @@
 
 - (void)smallWindowPlay {
     if ([self.superview isKindOfClass:[UIWindow class]]) return;
+    _isSmallWindowPlay = YES;
     self.playOrPauseBtn.hidden = YES;
     self.bottomBar.hidden = YES;
+    
     CGRect tableViewframe = [self.bindTableView convertRect:self.bindTableView.bounds toView:self.keyWindow];
     self.frame = [self convertRect:self.frame toView:self.keyWindow];
     [self.keyWindow addSubview:self];
@@ -569,16 +576,29 @@
 
 - (void)returnToOriginView {
     if (![self.superview isKindOfClass:[UIWindow class]]) return;
+    _isSmallWindowPlay = NO;
     self.playOrPauseBtn.hidden = NO;
     self.bottomBar.hidden = NO;
-
+    
     [UIView animateWithDuration:0.3 animations:^{
+        
         self.frame = CGRectMake(self.currentPlayCellRect.origin.x, self.currentPlayCellRect.origin.y, self.playerOriginalFrame.size.width, self.playerOriginalFrame.size.height);
         self.playerLayer.frame = self.bounds;
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
     } completion:^(BOOL finished) {
         self.frame = self.playerOriginalFrame;
-        [self.playSuprView addSubview:self];
+        UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath:self.currentIndexPath];
+        UIView *currentSuperView;
+        
+        for (UIView *subView in cell.contentView.subviews) {
+            if ([subView isKindOfClass:[self.playSuprView class]]) {
+                currentSuperView = subView;
+            }
+        }
+        if ([cell.contentView isKindOfClass:[self.playSuprView class]]) {
+            currentSuperView = cell.contentView;
+        }
+        [currentSuperView addSubview:self];
     }];
 }
 

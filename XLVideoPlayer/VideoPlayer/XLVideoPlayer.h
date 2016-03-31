@@ -34,10 +34,10 @@ typedef void (^VideoCompletedPlayingBlock) (XLVideoPlayer *videoPlayer);
 /**
  *  在scrollview的scrollViewDidScroll代理中调用
  *
- *  @param bindTableView       当前绑定的tableview
- *  @param currentPlayCellRect 当前播放的cell相对tableview的frame
- *  @param isSupport           是否支持右下角小窗悬停播放
+ *  @param bindTableView    当前绑定的tableview
+ *  @param currentIndexPath 当前播放的cell的indexpath
+ *  @param isSupport        是否支持右下角小窗悬停播放
  */
-- (void)playerWithBindTableView:(UITableView *)bindTableView currentPlayCellRect:(CGRect)currentPlayCellRect supportSmallWindowPlay:(BOOL)isSupport;
+- (void)playerWithBindTableView:(UITableView *)bindTableView currentIndexPath:(NSIndexPath *)currentIndexPath supportSmallWindowPlay:(BOOL)isSupport;
 
 @end

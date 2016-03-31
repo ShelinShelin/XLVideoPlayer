@@ -108,10 +108,9 @@
     _player.videoUrl = item.mp4_url;
     _player.frame = view.bounds;
     
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
-    XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:indexPath];
+    _indexPath = [NSIndexPath indexPathForRow:view.tag - 100 inSection:0];
+    XLVideoCell *cell = [self.exampleTableView cellForRowAtIndexPath:_indexPath];
     [cell.contentView addSubview:_player];
-    _currentPlayCellRect = [self.exampleTableView rectForRowAtIndexPath:indexPath];
     
     _player.completedPlayingBlock = ^(XLVideoPlayer *player) {
         [player destroyPlayer];
@@ -152,7 +151,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:self.exampleTableView]) {
         
-        [_player playerWithBindTableView:self.exampleTableView currentPlayCellRect:_currentPlayCellRect supportSmallWindowPlay:YES];
+        [_player playerWithBindTableView:self.exampleTableView currentIndexPath:_indexPath supportSmallWindowPlay:YES];
     }
 }
 
