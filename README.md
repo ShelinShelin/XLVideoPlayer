@@ -5,29 +5,45 @@ A Custom Video Player
 
 视频列表页和详情页
 
+![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_1.gif)
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_2.gif)
-![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_4.gif)
 - XLVideoPlayer.h接口定义
 
 每次视频播放完毕默认回到起始位置，点击后可循环播放，播放完毕也可把你想做的事放在回调的block中
 ```
-@interface XLVideoPlayer : UIView
-@property (nonatomic, copy) VideoCompletedPlayingBlock completedPlayingBlock;
 
-/** video url */
+/**
+ *  video url 视频路径
+ */
 @property (nonatomic, strong) NSString *videoUrl;
 
-/**play or pause  根据播放器当前播放状态执行播放或者暂停操作 */
+/**
+ *  play or pause
+ */
 - (void)playPause;
 
-/** dealloc 暂停移除播放器，最后记得将player = nil */
+/**
+ *  dealloc 销毁
+ */
 - (void)destroyPlayer;
 
-@end
+/**
+ *  在cell上播放必须绑定TableView、当前播放cell的IndexPath
+ */
+- (void)playerBindTableView:(UITableView *)bindTableView currentIndexPath:(NSIndexPath *)currentIndexPath;
+
+/**
+ *  在scrollview的scrollViewDidScroll代理中调用
+ *
+ *  @param support        是否支持右下角小窗悬停播放
+ */
+- (void)playerScrollIsSupportSmallWindowPlay:(BOOL)support;
+
 ```
 - 使用 
 
 将VideoPlayer文件夹内四个文件，及对应图片拖入工程内
+
 ```
 @interface VideoDetailViewController () {
     XLVideoPlayer *_player;
@@ -40,9 +56,23 @@ A Custom Video Player
     
     _player = [[XLVideoPlayer alloc] init];
     _player.videoUrl = self.mp4_url;
+    [_player playerBindTableView:self.exampleTableView currentIndexPath:_indexPath];
     _player.frame = CGRectMake(0, 64, self.view.frame.size.width, 250);
-    [self.view addSubview:_player];
+    [cell.contentView addSubview:_player];
 }
+
+```
+
+```
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if ([scrollView isEqual:self.exampleTableView]) {
+        
+        [_player playerScrollIsSupportSmallWindowPlay:YES];
+    }
+}
+
 ```
 
 
