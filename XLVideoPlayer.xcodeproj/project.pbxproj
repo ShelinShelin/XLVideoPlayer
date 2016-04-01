@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		EE52FCF71851D31AC776D14A /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1C1917B6C3CFD4EC8BD92887 /* libPods.a */; };
+		FD0CBDED1CAE1E9A009B012E /* ImageResources.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FD0CBDEC1CAE1E9A009B012E /* ImageResources.bundle */; };
 		FD4ABC521CA2AD62003BD910 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC511CA2AD62003BD910 /* main.m */; };
 		FD4ABC551CA2AD62003BD910 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC541CA2AD62003BD910 /* AppDelegate.m */; };
 		FD4ABC581CA2AD62003BD910 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = FD4ABC571CA2AD62003BD910 /* ViewController.m */; };
@@ -47,6 +48,7 @@
 		1C1917B6C3CFD4EC8BD92887 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		437BA5872AAC2254AC079B9A /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		AF31730470DA2F862EA11E25 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		FD0CBDEC1CAE1E9A009B012E /* ImageResources.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = ImageResources.bundle; sourceTree = "<group>"; };
 		FD4ABC4D1CA2AD62003BD910 /* XLVideoPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XLVideoPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FD4ABC511CA2AD62003BD910 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		FD4ABC531CA2AD62003BD910 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 				FD4ABC851CA2B766003BD910 /* Slider */,
 				FD4ABC941CA2B9B9003BD910 /* XLVideoPlayer.h */,
 				FD4ABC951CA2B9B9003BD910 /* XLVideoPlayer.m */,
+				FD0CBDEC1CAE1E9A009B012E /* ImageResources.bundle */,
 			);
 			path = VideoPlayer;
 			sourceTree = "<group>";
@@ -352,6 +355,7 @@
 				FD4ABC5D1CA2AD62003BD910 /* Assets.xcassets in Resources */,
 				FD4ABC5B1CA2AD62003BD910 /* Main.storyboard in Resources */,
 				FD4ABC931CA2B828003BD910 /* XLVideoCell.xib in Resources */,
+				FD0CBDED1CAE1E9A009B012E /* ImageResources.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

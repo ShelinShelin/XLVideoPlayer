@@ -231,8 +231,8 @@
         UIButton *fullScreenBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         fullScreenBtn.translatesAutoresizingMaskIntoConstraints = NO;
         fullScreenBtn.contentMode = UIViewContentModeCenter;
-        [fullScreenBtn setImage:[UIImage imageNamed:@"btn_zoom_out"] forState:UIControlStateNormal];
-        [fullScreenBtn setImage:[UIImage imageNamed:@"btn_zoom_in"] forState:UIControlStateSelected];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"ImageResources.bundle/btn_zoom_out"] forState:UIControlStateNormal];
+        [fullScreenBtn setImage:[UIImage imageNamed:@"ImageResources.bundle/btn_zoom_in"] forState:UIControlStateSelected];
         [fullScreenBtn addTarget:self action:@selector(actionFullScreen) forControlEvents:UIControlEventTouchDown];
         [_bottomBar addSubview:fullScreenBtn];
         self.zoomScreenBtn = fullScreenBtn;
@@ -293,8 +293,8 @@
         _playOrPauseBtn = [UIButton buttonWithType:UIButtonTypeCustom];
         _playOrPauseBtn.layer.opacity = 0.0f;
         _playOrPauseBtn.contentMode = UIViewContentModeCenter;
-        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"play"] forState:UIControlStateNormal];
-        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"pause"] forState:UIControlStateSelected];
+        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"ImageResources.bundle/play"] forState:UIControlStateNormal];
+        [_playOrPauseBtn setBackgroundImage:[UIImage imageNamed:@"ImageResources.bundle/pause"] forState:UIControlStateSelected];
         [_playOrPauseBtn addTarget:self action:@selector(playOrPause:) forControlEvents:UIControlEventTouchDown];
     }
     return _playOrPauseBtn;
