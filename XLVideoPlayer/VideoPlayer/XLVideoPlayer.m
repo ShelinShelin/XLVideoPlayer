@@ -562,8 +562,8 @@
 #pragma mark - animation smallWindowPlay
 
 - (void)smallWindowPlay {
-    if ([self.superview isKindOfClass:[UIWindow class]]) return;
-    _isSmallWindowPlay = YES;
+    if ([self.superview isKindOfClass:[UIWindow class]] && _isSmallWindowPlay) return;
+    
     self.playOrPauseBtn.hidden = YES;
     self.bottomBar.hidden = YES;
     
@@ -579,12 +579,14 @@
         self.frame = smallFrame;
         self.playerLayer.frame = self.bounds;
         self.activityIndicatorView.center = CGPointMake(w / 2.0, h / 2.0);
+    } completion:^(BOOL finished) {
+        _isSmallWindowPlay = YES;
     }];
 }
 
 - (void)returnToOriginView {
-    if (![self.superview isKindOfClass:[UIWindow class]]) return;
-    _isSmallWindowPlay = NO;
+    if (![self.superview isKindOfClass:[UIWindow class]] && !_isSmallWindowPlay) return;
+    
     self.playOrPauseBtn.hidden = NO;
     self.bottomBar.hidden = NO;
     
@@ -597,6 +599,8 @@
         self.frame = self.playerOriginalFrame;
         UITableViewCell *cell = [self.bindTableView cellForRowAtIndexPath:self.currentIndexPath];
         [cell.contentView addSubview:self];
+//        NSLog(@"completion");
+        _isSmallWindowPlay = NO;
     }];
 }
 
