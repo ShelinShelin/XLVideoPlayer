@@ -154,8 +154,8 @@ static CGFloat panDistance;
     if (panGesture.state ==  UIGestureRecognizerStateEnded && self.finishChangeBlock) {
         self.finishChangeBlock(self);
        
-    }else if((panGesture.state == UIGestureRecognizerStateChanged || UIGestureRecognizerStateBegan) && self.dragSliderBlock) {
-        self.dragSliderBlock(self);
+    }else if((panGesture.state == UIGestureRecognizerStateChanged || UIGestureRecognizerStateBegan) && self.draggingSliderBlock) {
+        self.draggingSliderBlock(self);
     }
 }
 

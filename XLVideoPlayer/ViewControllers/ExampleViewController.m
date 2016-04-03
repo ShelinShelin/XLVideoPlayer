@@ -97,7 +97,7 @@
     }];
 }
 
-- (void)showView:(UITapGestureRecognizer *)tapGesture {
+- (void)showVideoPlayer:(UITapGestureRecognizer *)tapGesture {
     [_player destroyPlayer];
     _player = nil;
     
@@ -131,7 +131,7 @@
     XLVideoCell *cell = [XLVideoCell videoCellWithTableView:tableView];
     XLVideoItem *item = self.videoArray[indexPath.row];
     cell.videoItem = item;
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showView:)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showVideoPlayer:)];
     [cell.videoImageView addGestureRecognizer:tap];
     cell.videoImageView.tag = indexPath.row + 100;
     return cell;

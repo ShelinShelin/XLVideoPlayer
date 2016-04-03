@@ -11,7 +11,7 @@
 
 typedef void (^SliderValueChangeBlock) (XLSlider *slider);
 typedef void (^SliderFinishChangeBlock) (XLSlider *slider);
-typedef void (^DragSliderBlock) (XLSlider *slider);
+typedef void (^DraggingSliderBlock) (XLSlider *slider);
 
 @interface XLSlider : UIView
 
@@ -27,7 +27,7 @@ typedef void (^DragSliderBlock) (XLSlider *slider);
 
 @property (nonatomic, copy) SliderValueChangeBlock valueChangeBlock;
 @property (nonatomic, copy) SliderFinishChangeBlock finishChangeBlock;
-@property (nonatomic, strong) DragSliderBlock dragSliderBlock;
+@property (nonatomic, strong) DraggingSliderBlock draggingSliderBlock;
 
 
 @end

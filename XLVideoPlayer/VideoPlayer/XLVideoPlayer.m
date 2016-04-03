@@ -18,13 +18,7 @@
 #define kBottomBaHeight 40.0f
 #define kPlayBtnSideLength 60.0f
 
-@interface XLVideoPlayer () {
-    BOOL _isOriginalFrame;
-    BOOL _isFullScreen;
-    BOOL _barHiden;
-    BOOL _inOperation;
-    BOOL _isSmallWindowPlay;
-}
+@interface XLVideoPlayer ()
 
 /**videoPlayer superView*/
 @property (nonatomic, strong) UIView *playSuprView;
@@ -49,6 +43,11 @@
 @property (nonatomic, assign) CGRect currentPlayCellRect;
 @property (nonatomic, strong) NSIndexPath *currentIndexPath;
 
+@property (nonatomic, assign) BOOL isOriginalFrame;
+@property (nonatomic, assign) BOOL isFullScreen;
+@property (nonatomic, assign) BOOL barHiden;
+@property (nonatomic, assign) BOOL inOperation;
+@property (nonatomic, assign) BOOL smallWinPlaying;
 @end
 
 @implementation XLVideoPlayer
@@ -70,7 +69,7 @@
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenBar)];
         [self addGestureRecognizer:tap];
         
-        _barHiden = YES;
+        self.barHiden = YES;
     }
     return self;
 }
@@ -150,13 +149,13 @@
     
     self.playerLayer.frame = self.bounds;
     
-    if (!_isOriginalFrame) {
+    if (!self.isOriginalFrame) {
         self.playerOriginalFrame = self.frame;
         self.playSuprView = self.superview;
         self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
         self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
-        _isOriginalFrame = YES;
+        self.isOriginalFrame = YES;
     }
 }
 
@@ -272,7 +271,7 @@
         slider.finishChangeBlock = ^(XLSlider *slider){
             [weakSelf finishChange];
         };
-        slider.dragSliderBlock = ^(XLSlider *slider){
+        slider.draggingSliderBlock = ^(XLSlider *slider){
             [weakSelf dragSlider];
         };
         
@@ -310,7 +309,7 @@
 #pragma mark - Screen Orientation
 
 - (void)statusBarOrientationChange:(NSNotification *)notification {
-    if (_isSmallWindowPlay) return;
+    if (self.smallWinPlaying) return;
     UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
     if (orientation == UIDeviceOrientationLandscapeLeft) {
 //        NSLog(@"UIDeviceOrientationLandscapeLeft");
@@ -325,7 +324,7 @@
 }
 
 - (void)actionFullScreen {
-    if (!_isFullScreen) {
+    if (!self.isFullScreen) {
         [self orientationLeftFullScreen];
     }else {
         [self smallScreen];
@@ -333,7 +332,7 @@
 }
 
 - (void)orientationLeftFullScreen {
-    _isFullScreen = YES;
+    self.isFullScreen = YES;
     self.zoomScreenBtn.selected = YES;
     [self.keyWindow addSubview:self];
     
@@ -352,7 +351,7 @@
 }
 
 - (void)orientationRightFullScreen {
-    _isFullScreen = YES;
+    self.isFullScreen = YES;
     self.zoomScreenBtn.selected = YES;
     [self.keyWindow addSubview:self];
     
@@ -371,7 +370,7 @@
 }
 
 - (void)smallScreen {
-    _isFullScreen = NO;
+    self.isFullScreen = NO;
     self.zoomScreenBtn.selected = NO;
     [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger:UIDeviceOrientationPortrait] forKey:@"orientation"];
    
@@ -404,7 +403,7 @@
 }
 
 - (void)showOrHidenBar {
-    if (_barHiden) {
+    if (self.barHiden) {
         [self show];
     }else {
         [self hiden];
@@ -417,9 +416,9 @@
         self.playOrPauseBtn.layer.opacity = kOpacity;
     } completion:^(BOOL finished) {
         if (finished) {
-            _barHiden = !_barHiden;
+            self.barHiden = !self.barHiden;
             [self performBlock:^{
-                if (!_barHiden && !_inOperation) {
+                if (!self.barHiden && !self.inOperation) {
                     [self hiden];
                 }
             } afterDelay:kBarShowDuration];
@@ -428,13 +427,13 @@
 }
 
 - (void)hiden {
-    _inOperation = NO;
+    self.inOperation = NO;
     [UIView animateWithDuration:kBarAnimateSpeed animations:^{
         self.bottomBar.layer.opacity = 0.0f;
         self.playOrPauseBtn.layer.opacity = 0.0f;
     } completion:^(BOOL finished){
         if (finished) {
-            _barHiden = !_barHiden;
+            self.barHiden = !self.barHiden;
         }
     }];
 }
@@ -446,9 +445,9 @@
 }
 
 - (void)finishChange {
-    _inOperation = NO;
+    self.inOperation = NO;
     [self performBlock:^{
-        if (!_barHiden && !_inOperation) {
+        if (!self.barHiden && !self.inOperation) {
             [self hiden];
         }
     } afterDelay:kBarShowDuration];
@@ -463,7 +462,7 @@
 //Dragging the thumb to suspend video playback
 
 - (void)dragSlider {
-    _inOperation = YES;
+    self.inOperation = YES;
     [self.player pause];;
 }
 
@@ -541,6 +540,7 @@
 //        NSLog(@"totalBuffer：%.2f",totalBuffer);
         //remove loading animation
         if (self.slider.middleValue <= self.slider.value) {
+            NSLog(@"正在缓冲！");
             self.activityIndicatorView.center = self.center;
             [self addSubview:self.activityIndicatorView];
             [self.activityIndicatorView startAnimating];
@@ -563,7 +563,7 @@
 
 - (void)smallWindowPlay {
     if ([self.superview isKindOfClass:[UIWindow class]]) return;
-    _isSmallWindowPlay = YES;
+    self.smallWinPlaying = YES;
     self.playOrPauseBtn.hidden = YES;
     self.bottomBar.hidden = YES;
     
@@ -584,7 +584,7 @@
 
 - (void)returnToOriginView {
     if (![self.superview isKindOfClass:[UIWindow class]]) return;
-    _isSmallWindowPlay = NO;
+    self.smallWinPlaying = NO;
     self.playOrPauseBtn.hidden = NO;
     self.bottomBar.hidden = NO;
     
