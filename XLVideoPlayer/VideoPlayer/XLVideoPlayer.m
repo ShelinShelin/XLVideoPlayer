@@ -11,12 +11,11 @@
 #import "XLSlider.h"
 #import <AVFoundation/AVFoundation.h>
 
-#define kPlayerBackgroundColor [UIColor blackColor].CGColor
-#define kBarAnimateSpeed 0.5f
-#define kBarShowDuration 4.0f
-#define kOpacity 0.7f
-#define kBottomBaHeight 40.0f
-#define kPlayBtnSideLength 60.0f
+static CGFloat const barAnimateSpeed = 0.5f;
+static CGFloat const barShowDuration = 4.0f;
+static CGFloat const opacity = 0.7f;
+static CGFloat const bottomBaHeight = 40.0f;
+static CGFloat const playBtnSideLength = 60.0f;
 
 @interface XLVideoPlayer ()
 
@@ -152,8 +151,8 @@
     if (!self.isOriginalFrame) {
         self.playerOriginalFrame = self.frame;
         self.playSuprView = self.superview;
-        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
-        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - bottomBaHeight, self.self.playerOriginalFrame.size.width, bottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - playBtnSideLength) / 2, (self.playerOriginalFrame.size.height - playBtnSideLength) / 2, playBtnSideLength, playBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
         self.isOriginalFrame = YES;
     }
@@ -164,7 +163,7 @@
 - (AVPlayerLayer *)playerLayer {
     if (!_playerLayer) {
         _playerLayer = [AVPlayerLayer playerLayerWithPlayer:self.player];
-        _playerLayer.backgroundColor = kPlayerBackgroundColor;
+        _playerLayer.backgroundColor = [UIColor blackColor].CGColor;
         _playerLayer.videoGravity = AVLayerVideoGravityResizeAspect;//视频填充模式
     }
     return _playerLayer;
@@ -342,8 +341,8 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(M_PI / 2);
         self.frame = self.keyWindow.bounds;
-        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
-        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - bottomBaHeight, self.keyWindow.bounds.size.height, bottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - playBtnSideLength) / 2, (self.keyWindow.bounds.size.width - playBtnSideLength) / 2, playBtnSideLength, playBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
     }];
     
@@ -362,8 +361,8 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(-M_PI / 2);
         self.frame = self.keyWindow.bounds;
-        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - kBottomBaHeight, self.keyWindow.bounds.size.height, kBottomBaHeight);
-        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - kPlayBtnSideLength) / 2, (self.keyWindow.bounds.size.width - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.bottomBar.frame = CGRectMake(0, self.keyWindow.bounds.size.width - bottomBaHeight, self.keyWindow.bounds.size.height, bottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.keyWindow.bounds.size.height - playBtnSideLength) / 2, (self.keyWindow.bounds.size.width - playBtnSideLength) / 2, playBtnSideLength, playBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.keyWindow.bounds.size.height / 2, self.keyWindow.bounds.size.width / 2);
     }];
     [self setStatusBarHidden:YES];
@@ -382,8 +381,8 @@
     [UIView animateWithDuration:0.3 animations:^{
         self.transform = CGAffineTransformMakeRotation(0);
         self.frame = self.playerOriginalFrame;
-        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - kBottomBaHeight, self.self.playerOriginalFrame.size.width, kBottomBaHeight);
-        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - kPlayBtnSideLength) / 2, (self.playerOriginalFrame.size.height - kPlayBtnSideLength) / 2, kPlayBtnSideLength, kPlayBtnSideLength);
+        self.bottomBar.frame = CGRectMake(0, self.playerOriginalFrame.size.height - bottomBaHeight, self.self.playerOriginalFrame.size.width, bottomBaHeight);
+        self.playOrPauseBtn.frame = CGRectMake((self.playerOriginalFrame.size.width - playBtnSideLength) / 2, (self.playerOriginalFrame.size.height - playBtnSideLength) / 2, playBtnSideLength, playBtnSideLength);
         self.activityIndicatorView.center = CGPointMake(self.playerOriginalFrame.size.width / 2, self.playerOriginalFrame.size.height / 2);
         [self updateConstraintsIfNeeded];
     }];
@@ -411,9 +410,9 @@
 }
 
 - (void)show {
-    [UIView animateWithDuration:kBarAnimateSpeed animations:^{
-        self.bottomBar.layer.opacity = kOpacity;
-        self.playOrPauseBtn.layer.opacity = kOpacity;
+    [UIView animateWithDuration:barAnimateSpeed animations:^{
+        self.bottomBar.layer.opacity = opacity;
+        self.playOrPauseBtn.layer.opacity = opacity;
     } completion:^(BOOL finished) {
         if (finished) {
             self.barHiden = !self.barHiden;
@@ -421,14 +420,14 @@
                 if (!self.barHiden && !self.inOperation) {
                     [self hiden];
                 }
-            } afterDelay:kBarShowDuration];
+            } afterDelay:barShowDuration];
         }
     }];
 }
 
 - (void)hiden {
     self.inOperation = NO;
-    [UIView animateWithDuration:kBarAnimateSpeed animations:^{
+    [UIView animateWithDuration:barAnimateSpeed animations:^{
         self.bottomBar.layer.opacity = 0.0f;
         self.playOrPauseBtn.layer.opacity = 0.0f;
     } completion:^(BOOL finished){
@@ -450,7 +449,7 @@
         if (!self.barHiden && !self.inOperation) {
             [self hiden];
         }
-    } afterDelay:kBarShowDuration];
+    } afterDelay:barShowDuration];
     CMTime currentCMTime = CMTimeMake(self.slider.value * self.totalDuration, 1);
 
     [self.player seekToTime:currentCMTime completionHandler:^(BOOL finished) {
