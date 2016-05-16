@@ -35,19 +35,9 @@
     if (self = [super init]) {
         self = [[NSBundle mainBundle] loadNibNamed:@"ExampleViewController" owner:nil options:nil].lastObject;
         self.automaticallyAdjustsScrollViewInsets = NO;
-        self.title = @"视频列表";
+        self.title = @"Video List";
     }
     return self;
-}
-
-#pragma mark - lazt loading
-
-- (XLVideoPlayer *)player {
-    if (!_player) {
-        _player = [[XLVideoPlayer alloc] init];
-        _player.frame = CGRectMake(0, 64, self.view.frame.size.width, 250);
-    }
-    return _player;
 }
 
 - (NSMutableArray *)videoArray {

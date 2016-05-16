@@ -202,7 +202,7 @@ static CGFloat panDistance;
 
 - (UIColor *)minColor {
     if (!_minColor) {
-        return [UIColor whiteColor];
+        return [UIColor greenColor];
     }
     return _minColor;
 }
@@ -227,6 +227,7 @@ static CGFloat panDistance;
 - (UIColor *)middleColor {
     if (!_middleColor) {
         return  [UIColor darkGrayColor];
+//        return  [UIColor redColor];
     }
     return _middleColor;
 }
