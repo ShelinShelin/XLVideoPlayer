@@ -178,6 +178,11 @@ static CGFloat const playBtnSideLength = 60.0f;
         [self addProgressObserver];
         
         [self addObserverToPlayerItem:playerItem];
+        
+        // 解决8.1系统播放无声音问题，8.0、9.0以上未发现此问题
+        AVAudioSession * session = [AVAudioSession sharedInstance];
+        [session setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [session setActive:YES error:nil];
     }
     return _player;
 }
