@@ -37,6 +37,7 @@ static CGFloat const playBtnSideLength = 60.0f;
 @property (nonatomic,strong) AVPlayer *player;
 /**video total duration*/
 @property (nonatomic, assign) CGFloat totalDuration;
+@property (nonatomic, assign) CGFloat current;
 
 @property (nonatomic, strong) UITableView *bindTableView;
 @property (nonatomic, assign) CGRect currentPlayCellRect;
@@ -94,7 +95,6 @@ static CGFloat const playBtnSideLength = 60.0f;
     [self.player pause];
     [self.player.currentItem cancelPendingSeeks];
     [self.player.currentItem.asset cancelLoading];
-    self.playerItem = nil;
     [self removeFromSuperview];
 }
 
@@ -113,7 +113,7 @@ static CGFloat const playBtnSideLength = 60.0f;
     CGFloat cellBottom = self.currentPlayCellRect.origin.y + self.currentPlayCellRect.size.height;
     CGFloat cellUp = self.currentPlayCellRect.origin.y;
     
-    if (self.bindTableView.contentOffset.y > cellBottom) {  //向上滑动，离开屏幕
+    if (self.bindTableView.contentOffset.y > cellBottom) {
         if (!support) {
             [self destroyPlayer];
             return;
@@ -122,7 +122,7 @@ static CGFloat const playBtnSideLength = 60.0f;
         return;
     }
     
-    if (cellUp > self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height) { //向下滑动，离开屏幕
+    if (cellUp > self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height) {
         if (!support) {
             [self destroyPlayer];
             return;
@@ -131,13 +131,13 @@ static CGFloat const playBtnSideLength = 60.0f;
         return;
     }
     
-    if (self.bindTableView.contentOffset.y < cellBottom){ //向下滑动，回到屏幕
+    if (self.bindTableView.contentOffset.y < cellBottom){
         if (!support) return;
         [self returnToOriginView];
         return;
     }
     
-    if (cellUp < self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height){ //向上滑动，回到屏幕
+    if (cellUp < self.bindTableView.contentOffset.y + self.bindTableView.frame.size.height){
         if (!support) return;
         [self returnToOriginView];
         return;
@@ -307,12 +307,12 @@ static CGFloat const playBtnSideLength = 60.0f;
 }
 
 - (void)finishChange {
-//    self.inOperation = NO;
-//    [self performBlock:^{
-//        if (!self.barHiden && !self.inOperation) {
-//            [self hiden];
-//        }
-//    } afterDelay:barShowDuration];
+    self.inOperation = NO;
+    [self performBlock:^{
+        if (!self.barHiden && !self.inOperation) {
+            [self hiden];
+        }
+    } afterDelay:barShowDuration];
     
     [self.player pause];
     
@@ -329,7 +329,7 @@ static CGFloat const playBtnSideLength = 60.0f;
 
 - (void)dragSlider {
     self.inOperation = YES;
-    [self.player pause];;
+    [self.player pause];
 }
 
 - (void)performBlock:(void (^)(void))block afterDelay:(NSTimeInterval)delay {
@@ -349,29 +349,35 @@ static CGFloat const playBtnSideLength = 60.0f;
     __weak typeof(self) weakSelf = self;
     
     //Set once per second
-    [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0, 1.0) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0f, 1.0f) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         
         float current = CMTimeGetSeconds(time);
+        weakSelf.current = current;
         float total = CMTimeGetSeconds([playerItem duration]);
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
-//            NSLog(@"%f", current / total);
+            NSLog(@"current --- %f", current );
             weakSelf.slider.value = current / total;
-            
+            /*
             //loading animation
-            if (self.slider.middleValue < self.slider.value) {
+            if (weakSelf.slider.middleValue <= weakSelf.slider.value) {
                 NSLog(@"正在缓冲！");
+                weakSelf.activityIndicatorView.hidden = NO;
                 weakSelf.activityIndicatorView.center = weakSelf.center;
-                [weakSelf addSubview:weakSelf.activityIndicatorView];
+//                [weakSelf addSubview:weakSelf.activityIndicatorView];
                 [weakSelf.activityIndicatorView startAnimating];
             }else {
-                [weakSelf.activityIndicatorView removeFromSuperview];
+//                [weakSelf.activityIndicatorView removeFromSuperview];
+                weakSelf.activityIndicatorView.hidden = YES;
             }
-
+*/
             if (weakSelf.slider.value == 1.0f) {      //complete block
                 if (weakSelf.completedPlayingBlock) {
                     [weakSelf setStatusBarHidden:NO];
-                    weakSelf.completedPlayingBlock(weakSelf);
+                    if ( weakSelf.completedPlayingBlock) {
+                        weakSelf.completedPlayingBlock(weakSelf);
+                    }
+                    weakSelf.completedPlayingBlock = nil;
                 }else {       //finish and loop playback
                     weakSelf.playOrPauseBtn.selected = NO;
                     [weakSelf showOrHidenBar];
@@ -413,7 +419,23 @@ static CGFloat const playBtnSideLength = 60.0f;
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-//        NSLog(@"totalBuffer：%.2f",totalBuffer);
+        NSLog(@"totalBuffer：%.2f",totalBuffer);
+        
+        
+        //loading animation
+        if (self.slider.middleValue  <= self.slider.value || (totalBuffer - 1.0) < self.current) {
+            NSLog(@"正在缓冲！");
+//            [self playOrPause:self.playOrPauseBtn];
+            self.activityIndicatorView.hidden = NO;
+            self.activityIndicatorView.center = self.center;
+            [self.activityIndicatorView startAnimating];
+        }else {
+            //                [weakSelf.activityIndicatorView removeFromSuperview];
+            
+            self.activityIndicatorView.hidden = YES;
+            [self.player play];
+        }
+
     }
 }
 
@@ -514,6 +536,8 @@ static CGFloat const playBtnSideLength = 60.0f;
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
         _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+        [self addSubview:_activityIndicatorView];
+
     }
     return _activityIndicatorView;
 }
