@@ -439,7 +439,7 @@ static CGFloat const playBtnSideLength = 60.0f;
         if (self.slider.middleValue  <= self.slider.value || (totalBuffer - 1.0) < self.current) {
             NSLog(@"正在缓冲...");
             self.activityIndicatorView.hidden = NO;
-            self.activityIndicatorView.center = self.center;
+//            self.activityIndicatorView.center = self.center;
             [self.activityIndicatorView startAnimating];
         }else {
             self.activityIndicatorView.hidden = YES;
