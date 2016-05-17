@@ -12,7 +12,7 @@
 #import <AVFoundation/AVFoundation.h>
 
 static CGFloat const barAnimateSpeed = 0.5f;
-static CGFloat const barShowDuration = 4.0f;
+static CGFloat const barShowDuration = 5.0f;
 static CGFloat const opacity = 0.7f;
 static CGFloat const bottomBaHeight = 40.0f;
 static CGFloat const playBtnSideLength = 60.0f;

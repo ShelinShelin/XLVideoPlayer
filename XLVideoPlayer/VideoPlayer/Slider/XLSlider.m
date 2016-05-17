@@ -78,13 +78,6 @@ static CGFloat panDistance;
 
 @implementation XLSlider
 
-@synthesize sliderColor = _sliderColor;
-@synthesize lineWidth = _lineWidth;
-@synthesize minColor = _minColor;
-@synthesize middleColor = _middleColor;
-@synthesize maxColor = _maxColor;
-@synthesize sliderDiameter = _sliderDiameter;
-
 - (instancetype)init {
     
     if (self = [super init]) {
@@ -170,6 +163,13 @@ static CGFloat panDistance;
 }
 
 #pragma mark - setter getter
+
+@synthesize sliderColor = _sliderColor;
+@synthesize lineWidth = _lineWidth;
+@synthesize minColor = _minColor;
+@synthesize middleColor = _middleColor;
+@synthesize maxColor = _maxColor;
+@synthesize sliderDiameter = _sliderDiameter;
 
 - (void)setSliderColor:(UIColor *)sliderColor {
     _sliderColor = sliderColor;
