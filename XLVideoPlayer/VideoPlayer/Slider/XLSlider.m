@@ -87,7 +87,7 @@ static CGFloat panDistance;
 
 - (instancetype)init {
     
-    if ([super init]) {
+    if (self = [super init]) {
         
         UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
         [self addGestureRecognizer:pan];
