@@ -69,6 +69,12 @@ static CGFloat const playBtnSideLength = 60.0f;
         UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(showOrHidenBar)];
         [self addGestureRecognizer:tap];
         
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appwillResignActive:) name:UIApplicationWillResignActiveNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDidEnterBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appWillEnterForeground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appBecomeActive:) name:UIApplicationDidBecomeActiveNotification object:nil];
+        
         self.barHiden = YES;
     }
     return self;
@@ -252,6 +258,26 @@ static CGFloat const playBtnSideLength = 60.0f;
     [self setStatusBarHidden:NO];
 }
 
+#pragma mark - app notif
+
+- (void)appDidEnterBackground:(NSNotification*)note {
+    
+    NSLog(@"appDidEnterBackground");
+}
+
+- (void)appWillEnterForeground:(NSNotification*)note {
+    NSLog(@"appWillEnterForeground");
+}
+
+- (void)appwillResignActive:(NSNotification *)note {
+    NSLog(@"appwillResignActive");
+    [self playOrPause:self.playOrPauseBtn];
+}
+
+- (void)appBecomeActive:(NSNotification *)note {
+    [self playOrPause:self.playOrPauseBtn];
+}
+
 #pragma mark - button action
 
 - (void)playOrPause:(UIButton *)btn {
@@ -356,21 +382,9 @@ static CGFloat const playBtnSideLength = 60.0f;
         float total = CMTimeGetSeconds([playerItem duration]);
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
-            NSLog(@"current --- %f", current );
+//            NSLog(@"current --- %f", current );
             weakSelf.slider.value = current / total;
-            /*
-            //loading animation
-            if (weakSelf.slider.middleValue <= weakSelf.slider.value) {
-                NSLog(@"正在缓冲！");
-                weakSelf.activityIndicatorView.hidden = NO;
-                weakSelf.activityIndicatorView.center = weakSelf.center;
-//                [weakSelf addSubview:weakSelf.activityIndicatorView];
-                [weakSelf.activityIndicatorView startAnimating];
-            }else {
-//                [weakSelf.activityIndicatorView removeFromSuperview];
-                weakSelf.activityIndicatorView.hidden = YES;
-            }
-*/
+
             if (weakSelf.slider.value == 1.0f) {      //complete block
                 if (weakSelf.completedPlayingBlock) {
                     [weakSelf setStatusBarHidden:NO];
@@ -419,23 +433,20 @@ static CGFloat const playBtnSideLength = 60.0f;
         float durationSeconds = CMTimeGetSeconds(timeRange.duration);
         NSTimeInterval totalBuffer = startSeconds + durationSeconds;//缓冲总长度
         self.slider.middleValue = totalBuffer / CMTimeGetSeconds(playerItem.duration);
-        NSLog(@"totalBuffer：%.2f",totalBuffer);
-        
+//        NSLog(@"totalBuffer：%.2f",totalBuffer);
         
         //loading animation
         if (self.slider.middleValue  <= self.slider.value || (totalBuffer - 1.0) < self.current) {
-            NSLog(@"正在缓冲！");
-//            [self playOrPause:self.playOrPauseBtn];
+            NSLog(@"正在缓冲...");
             self.activityIndicatorView.hidden = NO;
             self.activityIndicatorView.center = self.center;
             [self.activityIndicatorView startAnimating];
         }else {
-            //                [weakSelf.activityIndicatorView removeFromSuperview];
-            
             self.activityIndicatorView.hidden = YES;
-            [self.player play];
+            if (self.playOrPauseBtn.selected) {
+                [self.player play];
+            }
         }
-
     }
 }
 
@@ -642,6 +653,10 @@ static CGFloat const playBtnSideLength = 60.0f;
     [self.playerItem removeObserver:self forKeyPath:@"status"];
     [self.playerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillResignActiveNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidEnterBackgroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationWillEnterForegroundNotification object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIApplicationDidBecomeActiveNotification object:nil];
     NSLog(@"video player - dealloc");
 }
 
