@@ -84,12 +84,12 @@ static CGFloat const playBtnSideLength = 60.0f;
     _videoUrl = videoUrl;
     
     [self.layer addSublayer:self.playerLayer];
-    [self addSubview:self.activityIndicatorView];
+    [self insertSubview:self.activityIndicatorView belowSubview:self.playOrPauseBtn];
     [self.activityIndicatorView startAnimating];
     //play from start
     [self playOrPause:self.playOrPauseBtn];
     [self addSubview:self.bottomBar];
-    [self addSubview:self.playOrPauseBtn];
+    [self insertSubview:self.playOrPauseBtn aboveSubview:self.activityIndicatorView];
     
 }
 
@@ -546,8 +546,8 @@ static CGFloat const playBtnSideLength = 60.0f;
 
 - (UIActivityIndicatorView *)activityIndicatorView {
     if (!_activityIndicatorView) {
-        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-        [self addSubview:_activityIndicatorView];
+        _activityIndicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        [self insertSubview:_activityIndicatorView aboveSubview:self.playOrPauseBtn];
 
     }
     return _activityIndicatorView;
