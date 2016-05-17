@@ -178,7 +178,7 @@ static CGFloat panDistance;
 
 - (UIColor *)sliderColor {
     if (!_sliderColor) {
-        return [UIColor colorWithRed:0.49f green:0.83f blue:0.13f alpha:1.00f];
+        return [UIColor whiteColor];
     }
     return _sliderColor;
 }
@@ -214,7 +214,7 @@ static CGFloat panDistance;
 
 - (UIColor *)maxColor {
     if (!_maxColor) {
-        return [UIColor colorWithRed:0.96f green:0.96f blue:0.96f alpha:1.00f];
+        return [UIColor darkGrayColor];
     }
     return _maxColor;
 }
@@ -226,7 +226,7 @@ static CGFloat panDistance;
 
 - (UIColor *)middleColor {
     if (!_middleColor) {
-        return  [UIColor darkGrayColor];
+        return  [UIColor lightGrayColor];
 //        return  [UIColor redColor];
     }
     return _middleColor;

@@ -101,6 +101,8 @@ static CGFloat const playBtnSideLength = 60.0f;
     [self.player pause];
     [self.player.currentItem cancelPendingSeeks];
     [self.player.currentItem.asset cancelLoading];
+    [self.slider removeFromSuperview];
+    self.slider = nil;
     [self removeFromSuperview];
 }
 
@@ -375,7 +377,7 @@ static CGFloat const playBtnSideLength = 60.0f;
     __weak typeof(self) weakSelf = self;
     
     //Set once per second
-    [self.player addPeriodicTimeObserverForInterval:CMTimeMake(1.0f, 1.0f) queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
+    [self.player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(0.1f, NSEC_PER_SEC)  queue:dispatch_get_main_queue() usingBlock:^(CMTime time) {
         
         float current = CMTimeGetSeconds(time);
         weakSelf.current = current;
@@ -383,8 +385,10 @@ static CGFloat const playBtnSideLength = 60.0f;
         weakSelf.progressLabel.text = [weakSelf timeFormatted:current];
         if (current) {
 //            NSLog(@"current --- %f", current );
-            weakSelf.slider.value = current / total;
-
+            
+            if (!weakSelf.inOperation) {
+                 weakSelf.slider.value = current / total;
+            }
             if (weakSelf.slider.value == 1.0f) {      //complete block
                 if (weakSelf.completedPlayingBlock) {
                     [weakSelf setStatusBarHidden:NO];
