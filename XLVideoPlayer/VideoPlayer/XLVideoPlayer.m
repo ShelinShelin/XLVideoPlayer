@@ -55,7 +55,7 @@ static CGFloat const playBtnSideLength = 60.0f;
 #pragma mark - public method
 
 - (instancetype)init {
-    if ([super init]) {
+    if (self = [super init]) {
         
         self.backgroundColor = [UIColor blackColor];
         
