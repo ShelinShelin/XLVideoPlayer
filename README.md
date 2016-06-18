@@ -1,21 +1,9 @@
 # XLVideoPlayer
 A Custom Video Player
-######基于AVFoundation的视频播放器：
-
-- 支持UITableViewCell上小屏、全屏，手动及屏幕旋转切换。
-- 支持右下角小窗口悬停播放。
-- 继承与UIView，不依赖与第三方库，显示包含播放进度、网络加载进度。
-- 支持本地、网络（mp4、m3u8、3gp、mov）视频，拖拽、点击调整播放进度。
-
-- 动态图。
-
-视频列表页和详情页
 
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_1.gif)
 ![](https://github.com/ShelinShelin/XLVideoPlayer/blob/master/gif/Untitled_2.gif)
 - XLVideoPlayer.h接口定义
-
-每次视频播放完毕默认回到起始位置，点击后可循环播放，播放完毕也可把你想做的事放在回调的block中。如果加在普通UIView上播放可以不调用UITableView相关方法。
 ```
 
 /**
