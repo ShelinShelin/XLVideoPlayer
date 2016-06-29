@@ -654,6 +654,7 @@ static CGFloat const playBtnSideLength = 60.0f;
 #pragma mark - dealloc
 
 - (void)dealloc {
+    [[UIDevice currentDevice] endGeneratingDeviceOrientationNotifications];
     [self.playerItem removeObserver:self forKeyPath:@"status"];
     [self.playerItem removeObserver:self forKeyPath:@"loadedTimeRanges"];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceOrientationDidChangeNotification object:[UIDevice currentDevice]];
