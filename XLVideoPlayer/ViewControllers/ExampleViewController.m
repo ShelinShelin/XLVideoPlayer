@@ -143,7 +143,7 @@
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     if ([scrollView isEqual:self.exampleTableView]) {
         
-        [_player playerScrollIsSupportSmallWindowPlay:YES];
+        [_player playerScrollIsSupportSmallWindowPlay:NO];
     }
 }
 
